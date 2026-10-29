@@ -6,11 +6,11 @@ Local validation date: 2026-10-29.
 |---|---|---|
 | ESLint | `npm run lint` | Passed |
 | TypeScript project build | `npm run typecheck` | Passed |
-| Component/unit tests | `npm test` | 5 passed |
+| Component/unit tests | `npm test` | 7 passed |
 | Production build | `npm run build` | Passed; 1711 modules transformed |
 | Dependency audit | `npm audit --audit-level=high` | 0 vulnerabilities |
 | Browser E2E | `npm run e2e` | 11 passed across desktop/mobile; 1 mobile-only case skipped on desktop as designed |
-| Desktop/mobile visual capture | `node scripts/capture.mjs` | Passed; two real PNG captures in `docs/screenshots/` |
+| Desktop/mobile visual capture | `node scripts/capture.mjs` | Passed; four real PNG captures in `docs/screenshots/`, including the AutismoConecta case study at both breakpoints |
 | Lighthouse | Lighthouse 12.8.2, production preview | Performance 100, Accessibility 100, Best Practices 100, SEO 100 |
 | Resume PDFs | File search and UI test | 0 of 4 present; links disabled |
 

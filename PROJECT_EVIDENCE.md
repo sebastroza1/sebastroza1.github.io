@@ -5,6 +5,8 @@ Audit date: 2026-10-29. “Public repository” means the portfolio links to ins
 | Portfolio project | Primary evidence | Evidence boundary |
 |---|---|---|
 | Reproducible PyTorch Benchmarking | [mlops-gpu-benchmark-lab](https://github.com/sebastroza1/mlops-gpu-benchmark-lab), `RESULTS.md`, commit `a28eceb`, CI run `40824821285` | Quick CPU evidence only; no CUDA benchmark claim |
+| Collaboration Ops Lab | [collaboration-ops-lab](https://github.com/sebastroza1/collaboration-ops-lab), commit `fef648a`, CI run `40959343791`, 15 tests | Synthetic fixtures and zero-write dry-run only; live Graph and tenant administration are not claimed |
+| Web Performance Evidence Lab | [web-performance-evidence](https://github.com/sebastroza1/web-performance-evidence), commit `4cd204f`, CI run `40959346799`, 10 tests, reproducible Markdown/SVG | Owner-provided local p75 sample; not real-user telemetry or causal evidence |
 | ML Experiment Tracking Lab | [ml-experiment-tracking-lab](https://github.com/sebastroza1/ml-experiment-tracking-lab), `RESULTS.md`, commit `c0fe10f`, CI run `40824830483` | One CPU quick search and seed |
 | Scientific Anomaly Detection | [scientific-anomaly-detection](https://github.com/sebastroza1/scientific-anomaly-detection), `RESULTS.md`, commit `a008232`, CI run `40824834996` | AI4I is synthetic; not industrial validation |
 | ML Model Serving & Operations | [ml-model-serving-ops](https://github.com/sebastroza1/ml-model-serving-ops), `RESULTS.md`, commit `015f893`, CI run `40824842705` | Synthetic classifier; Kubernetes not cluster-validated |
@@ -21,4 +23,4 @@ Audit date: 2026-10-29. “Public repository” means the portfolio links to ins
 | LandFinder Chile | Owner-provided work-in-progress description | Private and in development; no metrics or production claim |
 | Web Scraper FirstJob | [Web_Scraper_firstJob](https://github.com/sebastroza1/Web_Scraper_firstJob) | Public source; live-site stability and CI coverage not claimed |
 
-The catalogue contains 16 projects. Category filters are tags over the same records; they do not create duplicate project cards.
+The catalogue contains 18 projects. Category filters are tags over the same records; they do not create duplicate project cards.

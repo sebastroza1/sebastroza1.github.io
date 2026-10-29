@@ -17,6 +17,7 @@
 - A benchmark must state device, scope, cache/runtime limitations and data size.
 - “Implemented” is not equivalent to “deployed”, and “deployed” is not equivalent to “validated under load”.
 - Academic prototypes are not production, clinical or institutional systems unless separate evidence proves that claim.
+- Owner-provided professional context is not commit-level authorship; keep `PROFESSIONAL_EVIDENCE_PUBLIC.md` synchronized with the site.
 - Do not add a metric from memory; link it to a committed artifact.
 
 ## Routine update

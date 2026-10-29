@@ -18,6 +18,8 @@ React views + hash routing ──► Vite production bundle ──► GitHub Pag
 
 - **Hash routing:** supports direct navigation on GitHub Pages without a server rewrite rule or a 404 fallback script.
 - **Typed local content:** claims can be reviewed in pull requests, do not depend on a live API, and cannot leak a GitHub token.
+- **Bounded professional evidence:** owner-provided experience is explicitly separated from repository-level authorship evidence. Private code, infrastructure and user data are excluded.
+- **Direction-aware performance evidence:** the case-study panel distinguishes improvements from regressions, preserves the supplied local measurements and links calculations to a reproducible public lab.
 - **No React Router:** the routing surface is small, so a dependency-free hash parser is easier to audit.
 - **CSS architecture:** Tailwind provides compilation and utilities; `src/styles.css` defines the visual tokens and component classes used by the editorial design.
 - **Bilingual data:** every substantive project field stores an English and Spanish value. Technology and repository names remain unchanged.
@@ -25,7 +27,7 @@ React views + hash routing ──► Vite production bundle ──► GitHub Pag
 
 ## Main modules
 
-- `src/App.tsx`: navigation, views, localization, filters and project-detail composition.
+- `src/App.tsx`: navigation, views, localization, filters, project-detail composition and the professional case study.
 - `src/data/projects.ts`: typed project catalogue and evidence boundaries.
 - `src/styles.css`: responsive themes, focus states and reduced-motion behavior.
 - `src/App.test.tsx`: component and state tests.

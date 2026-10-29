@@ -8,7 +8,7 @@ The site is intentionally explicit about evidence boundaries: synthetic datasets
 
 ![Desktop home page](docs/screenshots/home-desktop.png)
 
-The mobile project catalogue capture is available at [`docs/screenshots/projects-mobile.png`](docs/screenshots/projects-mobile.png).
+The mobile project catalogue capture is available at [`docs/screenshots/projects-mobile.png`](docs/screenshots/projects-mobile.png). The bounded AutismoConecta case study is documented in both [desktop](docs/screenshots/autismoconecta-case-study-desktop.png) and [mobile](docs/screenshots/autismoconecta-case-study-mobile.png) captures.
 
 ## Stack
 
@@ -43,7 +43,7 @@ npm run e2e
 
 ## Content maintenance
 
-Project content is typed and versioned in `src/data/projects.ts`. See [MAINTENANCE.md](MAINTENANCE.md) before adding or changing claims, and [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md) for the evidence map.
+Project content is typed and versioned in `src/data/projects.ts`. See [MAINTENANCE.md](MAINTENANCE.md) before adding or changing claims, [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md) for the evidence map, and [PROFESSIONAL_EVIDENCE_PUBLIC.md](PROFESSIONAL_EVIDENCE_PUBLIC.md) for the public authorship boundary.
 
 CV files are deliberately absent until their current PDFs are provided and verified. The UI disables those downloads rather than exposing broken links. See [DEPLOYMENT.md](DEPLOYMENT.md).
 
@@ -52,6 +52,7 @@ CV files are deliberately absent until their current PDFs are provided and verif
 - [Architecture](ARCHITECTURE.md)
 - [Content sources](CONTENT_SOURCES.md)
 - [Project evidence](PROJECT_EVIDENCE.md)
+- [Professional evidence boundary](PROFESSIONAL_EVIDENCE_PUBLIC.md)
 - [Deployment](DEPLOYMENT.md)
 - [Maintenance](MAINTENANCE.md)
 - [Privacy](PRIVACY.md)
