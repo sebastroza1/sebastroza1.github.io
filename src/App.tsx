@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
-  ArrowLeft, ArrowRight, Braces, CheckCircle2, ChevronRight, CircleDot,
+  AlertTriangle, ArrowLeft, ArrowRight, Bot, Braces, CheckCircle2, ChevronRight, CircleDot,
   Database, Download, ExternalLink, FileWarning, Github, Globe2, Languages,
-  Linkedin, Mail, Menu, Moon, Network, Search, Server, Sun, TestTube2, X,
+  Gauge, Linkedin, Mail, Menu, Moon, Network, Search, Server, ShieldCheck, Sun, TestTube2, X,
 } from 'lucide-react'
 import { allLanguages, allTechnologies, categoryLabels, projects, type Category, type Language, type Project } from './data/projects'
 
@@ -21,6 +21,8 @@ const copy = {
     aboutBody: 'I completed the academic requirements for Civil Engineering in Computing and Informatics at Universidad Central de Chile in 2026. Formal degree conferral is pending institutional confirmation. My work spans production software, Linux infrastructure, backend and frontend development, databases, automation, machine learning and computer vision.',
     featured: 'Selected engineering work', featuredBody: 'Projects chosen for technical depth, reproducibility and honest evidence boundaries.',
     experience: 'Professional experience', education: 'Education & research', skills: 'Engineering skills',
+    caseStudy: 'AutismoConecta · publishable case study',
+    caseStudyBody: 'A deliberately bounded account of owner-provided professional work and reproducible local performance evidence. Private code, infrastructure and user data remain excluded.',
     allProjects: 'Explore all projects', filters: 'Filter the evidence', search: 'Search projects', category: 'Area', language: 'Language', tech: 'Technology', kind: 'Type', status: 'Status', all: 'All', clear: 'Clear filters', noResults: 'No projects match these filters.',
     results: 'Verified result', limitations: 'Limitations', evidence: 'Evidence', details: 'View case study', repository: 'GitHub repository', docs: 'Evidence document',
     overview: 'Overview', problem: 'Problem', contribution: 'My contribution', architecture: 'Architecture', implementation: 'Implementation', challenges: 'Engineering challenges', testing: 'Testing', learned: 'What I learned', back: 'Back to projects',
@@ -40,6 +42,8 @@ const copy = {
     aboutBody: 'Completé los requisitos académicos de Ingeniería Civil en Computación e Informática en la Universidad Central de Chile durante 2026. El otorgamiento formal del grado está pendiente de confirmación institucional. Mi trabajo abarca software de producción, infraestructura Linux, backend y frontend, bases de datos, automatización, machine learning y visión computacional.',
     featured: 'Trabajo de ingeniería seleccionado', featuredBody: 'Proyectos elegidos por profundidad técnica, reproducibilidad y límites honestos de evidencia.',
     experience: 'Experiencia profesional', education: 'Educación e investigación', skills: 'Competencias de ingeniería',
+    caseStudy: 'AutismoConecta · caso de estudio publicable',
+    caseStudyBody: 'Presentación deliberadamente acotada de trabajo profesional informado por el propietario y evidencia local reproducible de rendimiento. Código privado, infraestructura y datos de usuarios permanecen excluidos.',
     allProjects: 'Explorar todos los proyectos', filters: 'Filtrar la evidencia', search: 'Buscar proyectos', category: 'Área', language: 'Lenguaje', tech: 'Tecnología', kind: 'Tipo', status: 'Estado', all: 'Todos', clear: 'Limpiar filtros', noResults: 'Ningún proyecto coincide con estos filtros.',
     results: 'Resultado verificado', limitations: 'Limitaciones', evidence: 'Evidencia', details: 'Ver caso de estudio', repository: 'Repositorio GitHub', docs: 'Documento de evidencia',
     overview: 'Resumen', problem: 'Problema', contribution: 'Mi contribución', architecture: 'Arquitectura', implementation: 'Implementación', challenges: 'Desafíos de ingeniería', testing: 'Pruebas', learned: 'Qué aprendí', back: 'Volver a proyectos',
@@ -52,38 +56,47 @@ const copy = {
 const experience = [
   {
     company: 'AutismoConecta', period: { en: 'September 2026 — present', es: 'Septiembre 2026 — actualidad' },
-    role: 'Software Engineer — Backend, QA & Infrastructure',
+    role: 'Software Engineer / Cross-functional IT',
     description: {
       en: 'Early-stage Chilean social-impact technology startup connecting neurodivergent people and families with professionals, services and support resources.',
       es: 'Startup tecnológica chilena de impacto social que conecta personas neurodivergentes y familias con profesionales, servicios y recursos de apoyo.',
     },
     details: {
-      en: 'Laravel/PHP, Angular, Next.js, Linux VPS, Nginx, Docker, PHP-FPM, databases, TEST/PROD environments, APIs, security, integrations and deployments.',
-      es: 'Laravel/PHP, Angular, Next.js, VPS Linux, Nginx, Docker, PHP-FPM, bases de datos, ambientes TEST/PROD, APIs, seguridad, integraciones y despliegues.',
+      en: 'Owner-reported scope spans full-stack development, Linux infrastructure, databases, automation, security, external integrations, administrative systems, QA, deployment validation and incident diagnosis.',
+      es: 'El alcance informado por el propietario abarca desarrollo full-stack, infraestructura Linux, bases de datos, automatización, seguridad, integraciones externas, sistemas administrativos, QA, validación de despliegues y diagnóstico de incidencias.',
     },
-    result: { en: 'One documented quality cycle included 469 backend and 191 frontend tests.', es: 'Un ciclo de calidad documentado incluyó 469 pruebas backend y 191 frontend.' },
+    result: { en: 'Public evidence is intentionally limited to high-level context and an owner-provided local p75 performance case study; commit-level authorship remains pending verification.', es: 'La evidencia pública se limita intencionalmente al contexto de alto nivel y un caso p75 local proporcionado por el propietario; la autoría por commit sigue pendiente de verificación.' },
   },
   {
-    company: 'TRC Recruitment', period: { en: 'August 2025 — March 2026', es: 'Agosto 2025 — marzo 2026' },
+    company: 'TRC Recruitme', period: { en: 'August 2025 — March 2026', es: 'Agosto 2025 — marzo 2026' },
     role: 'QA, Automation & Data Integrations',
     description: {
-      en: 'Recruitment and personnel-selection company using technology-enabled human-resources workflows.',
-      es: 'Empresa de reclutamiento y selección de personal con flujos tecnológicos de recursos humanos.',
+      en: 'Technical, professional and university placement periods followed by continuity under contract in technology-enabled recruitment workflows; individual placement dates are not claimed.',
+      es: 'Prácticas técnica, profesional y universitaria seguidas por continuidad bajo contrato en flujos tecnológicos de reclutamiento; no se afirman fechas individuales de cada práctica.',
     },
     details: {
       en: 'Data extraction and transformation, Dropbox CV migration, import templates, n8n, webhooks, chatbots, Selenium, Postman, Scrum and documentation.',
       es: 'Extracción y transformación, migración de CV desde Dropbox, templates, n8n, webhooks, chatbots, Selenium, Postman, Scrum y documentación.',
     },
-    result: { en: 'A task estimated at one month was completed in approximately one week.', es: 'Una tarea estimada en un mes fue completada en aproximadamente una semana.' },
+    result: { en: 'Owner-reported outcome: a task estimated at one month was completed in approximately one week.', es: 'Resultado informado por el propietario: una tarea estimada en un mes fue completada en aproximadamente una semana.' },
   },
+]
+
+const performanceMetrics = [
+  { key: 'DOMContentLoaded', before: 3.77, after: 2.16, unit: 's', change: 42.7 },
+  { key: 'Load', before: 4.27, after: 3.38, unit: 's', change: 20.8 },
+  { key: 'FCP', before: 4.04, after: 2.41, unit: 's', change: 40.3 },
+  { key: 'LCP', before: 4.04, after: 3.46, unit: 's', change: 14.4, warning: true },
+  { key: 'CLS', before: 0.002, after: 0.062, unit: '', change: -3000, regression: true },
+  { key: 'Initial bundle', before: 773.83, after: 507.85, unit: 'kB', change: 34.4 },
 ]
 
 const skills = [
   { icon: CircleDot, title: 'Machine Learning', scope: 'Independent + academic', items: ['Python', 'PyTorch', 'TensorFlow/Keras', 'scikit-learn', 'MLflow', 'Model evaluation'], links: ['mlops-gpu-benchmark-lab', 'scientific-anomaly-detection'] },
   { icon: Braces, title: 'Software Development', scope: 'Professional + independent', items: ['PHP', 'Laravel', 'TypeScript', 'Angular', 'Next.js', 'FastAPI', 'Flutter'], links: ['ml-model-serving-ops', 'web-scraper-firstjob'] },
-  { icon: Server, title: 'Systems Engineering', scope: 'Professional + independent', items: ['Linux', 'Red Hat labs', 'Docker', 'Networking', 'C++20', 'Bash'], links: ['cpp-file-integrity-toolkit', 'rhel-network-operations-lab'] },
+  { icon: Server, title: 'Systems Engineering', scope: 'Professional + independent', items: ['Linux', 'Red Hat labs', 'Docker', 'Networking', 'Identity reconciliation', 'Bash'], links: ['collaboration-ops-lab', 'rhel-network-operations-lab'] },
   { icon: Database, title: 'Data Engineering', scope: 'Professional + independent', items: ['SQL', 'PostgreSQL/PostGIS', 'MySQL', 'Firebase/Firestore', 'ETL', 'REST APIs'], links: ['dataset-quality-calibration-lab', 'landfinder-chile'] },
-  { icon: TestTube2, title: 'Quality & Automation', scope: 'Professional + independent', items: ['Git', 'GitHub Actions', 'Selenium', 'Postman', 'pytest', 'Scrum', 'n8n'], links: ['rhel-network-operations-lab', 'storage-performance-observability'] },
+  { icon: TestTube2, title: 'Quality & Automation', scope: 'Professional + independent', items: ['Git', 'GitHub Actions', 'Web performance', 'Postman', 'pytest', 'Scrum', 'n8n'], links: ['web-performance-evidence', 'storage-performance-observability'] },
   { icon: Network, title: 'Research & Prototyping', scope: 'Academic', items: ['OpenCV', 'Unity', 'C#', 'AR Foundation', 'Arduino', 'Scientific evaluation'], links: ['neurofast', 'bateria-peroles'] },
 ]
 
@@ -158,6 +171,34 @@ function EvidenceVisual({ language }: { language: Language }) {
   </figure>
 }
 
+function AutismoConectaCaseStudy({ language }: { language: Language }) {
+  const t = copy[language]
+  return <Section id="autismoconecta-case-study" eyebrow="04 / Professional evidence" title={t.caseStudy} className="case-study-section">
+    <p className="section-intro">{t.caseStudyBody}</p>
+    <div className="case-study-grid">
+      <article><ShieldCheck/><p className="mono-label">{language === 'en' ? 'Responsibility boundary' : 'Límite de responsabilidad'}</p><h3>{language === 'en' ? 'Cross-functional engineering' : 'Ingeniería transversal'}</h3><p>{language === 'en' ? 'Owner-reported work includes full-stack delivery, Linux operations, databases, automation, security, integrations, administrative tooling, QA and incident resolution.' : 'El trabajo informado incluye desarrollo full-stack, operaciones Linux, bases de datos, automatización, seguridad, integraciones, herramientas administrativas, QA y resolución de incidencias.'}</p></article>
+      <article><Bot/><p className="mono-label">{language === 'en' ? 'AI-assisted development' : 'Desarrollo asistido por IA'}</p><h3>{language === 'en' ? 'Human-reviewed and accountable' : 'Revisado por personas y responsable'}</h3><p>{language === 'en' ? 'AI tools support analysis, implementation and documentation. Public claims remain subject to human review, tests, debugging and evidence boundaries; AI assistance does not establish individual authorship.' : 'Herramientas de IA apoyan análisis, implementación y documentación. Las afirmaciones públicas dependen de revisión humana, pruebas, depuración y límites de evidencia; la asistencia no establece autoría individual.'}</p></article>
+      <article><Gauge/><p className="mono-label">{language === 'en' ? 'Strongest public artifact' : 'Artefacto público más sólido'}</p><h3>{language === 'en' ? 'Reproducible performance analysis' : 'Análisis de rendimiento reproducible'}</h3><p>{language === 'en' ? 'The linked lab preserves supplied measurements, calculation rules, accessible visualization and limitations without contacting production.' : 'El laboratorio vinculado conserva mediciones proporcionadas, reglas de cálculo, visualización accesible y limitaciones sin contactar producción.'}</p></article>
+    </div>
+    <div className="performance-panel" aria-labelledby="performance-title">
+      <div className="performance-heading"><div><p className="mono-label">LOCAL P75 · OWNER-PROVIDED</p><h3 id="performance-title">{language === 'en' ? 'Before / after performance evidence' : 'Evidencia de rendimiento antes / después'}</h3></div><div className="performance-legend"><span className="before-dot">{language === 'en' ? 'Before' : 'Antes'}</span><span className="after-dot">{language === 'en' ? 'After' : 'Después'}</span></div></div>
+      <div className="metric-list">{performanceMetrics.map((metric) => {
+        const maximum = Math.max(metric.before, metric.after)
+        return <div className={`metric-row ${metric.regression ? 'metric-regression' : ''}`} key={metric.key}>
+          <div className="metric-label"><b>{metric.key}</b><span>{metric.change > 0 ? '+' : ''}{metric.change.toLocaleString(language)}%</span></div>
+          <div className="metric-bars" aria-label={`${metric.key}: ${metric.before} ${metric.unit} before, ${metric.after} ${metric.unit} after`}>
+            <span className="metric-before" style={{ width: `${Math.max(3, metric.before / maximum * 100)}%` }}><i>{metric.before} {metric.unit}</i></span>
+            <span className="metric-after" style={{ width: `${Math.max(3, metric.after / maximum * 100)}%` }}><i>{metric.after} {metric.unit}</i></span>
+          </div>
+          {(metric.warning || metric.regression) && <span className="metric-warning"><AlertTriangle size={14}/>{metric.regression ? (language === 'en' ? 'Regression, although 0.062 remains below 0.1.' : 'Regresión, aunque 0,062 permanece bajo 0,1.') : (language === 'en' ? 'Improved, but 3.46 s remains above the 2.5 s target.' : 'Mejoró, pero 3,46 s sigue sobre el objetivo de 2,5 s.')}</span>}
+        </div>
+      })}</div>
+      <p className="performance-note">{language === 'en' ? 'Local p75 values supplied by the owner. Not real-user field data, not independently reproduced and not proof of causality. Browser, device, route, cache, throttling, run count and variance were not documented.' : 'Valores p75 locales proporcionados por el propietario. No son datos de usuarios reales, no fueron reproducidos independientemente ni prueban causalidad. No se documentaron navegador, dispositivo, ruta, caché, throttling, número de corridas ni varianza.'}</p>
+      <div className="case-study-actions"><a className="button primary" href="#/projects/web-performance-evidence">{language === 'en' ? 'Inspect performance lab' : 'Inspeccionar laboratorio'}<ArrowRight size={16}/></a><a className="button secondary" href="https://github.com/sebastroza1/sebastroza1.github.io/blob/main/PROFESSIONAL_EVIDENCE_PUBLIC.md" target="_blank" rel="noreferrer">{language === 'en' ? 'Evidence boundary' : 'Límite de evidencia'}<ExternalLink size={14}/></a></div>
+    </div>
+  </Section>
+}
+
 function Status({ value }: { value: Project['status'] }) {
   return <span className={`status-badge status-${value.toLowerCase().replaceAll(/[^a-z]+/g, '-')}`}><CheckCircle2 size={13}/>{value}</span>
 }
@@ -226,12 +267,13 @@ function HomePage({ language }: { language: Language }) {
         <p className="availability"><Globe2 size={16}/>{t.availability}</p></div>
       <EvidenceVisual language={language}/>
     </section>
-    <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">11</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
+    <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">13</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
     <Section eyebrow="01 / About" title={t.aboutTitle}><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
     <Section eyebrow="02 / Work" title={t.featured} className="featured-section"><p className="section-intro">{t.featuredBody}</p><div className="project-grid featured-grid">{featured.map((project) => <ProjectCard key={project.slug} project={project} language={language}/>)}</div><a className="button secondary section-cta" href="#/projects">{t.allProjects}<ArrowRight size={17}/></a></Section>
     <Section id="experience" eyebrow="03 / Timeline" title={t.experience}><div className="timeline">{experience.map((item, index) => <article key={item.company}><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div className="timeline-content"><div className="timeline-heading"><div><h3>{item.company}</h3><p>{item.role}</p></div><time>{item.period[language]}</time></div><p>{item.description[language]}</p><p>{item.details[language]}</p><div className="evidence-callout"><CheckCircle2 size={18}/><span>{item.result[language]}</span></div></div></article>)}</div></Section>
-    <Section eyebrow="04 / Education" title={t.education}><div className="education-grid"><article><p className="mono-label">Universidad Central de Chile</p><h3>Civil Engineering in Computing and Informatics</h3><p>{t.academicPending}</p><div className="tag-list">{['Algorithms', 'Java & OOP', 'Databases', 'Linux & Red Hat', 'Networking', 'Machine Learning', 'Arduino'].map((item) => <span key={item}>{item}</span>)}</div><p>{language === 'en' ? 'Teaching-assistant experience in Physics and Probability.' : 'Experiencia como ayudante en Física y Probabilidad.'}</p></article><article className="recognition-card"><p className="mono-label">Recognition · 2026</p><h3>NeuroFAST</h3><p>{language === 'en' ? 'Selected in the first national stage of the UDD Impacto Emprendedor 2026 competition and participated in formative activities. This does not mean the project won or has clinical validation.' : 'Seleccionado en la primera etapa nacional de Impacto Emprendedor UDD 2026 y participante en actividades formativas. Esto no significa que ganó ni que tenga validación clínica.'}</p><a className="text-link" href="#/projects/neurofast">{t.details}<ChevronRight size={15}/></a></article></div></Section>
-    <Section id="skills" eyebrow="05 / Evidence map" title={t.skills}><div className="skills-grid">{skills.map(({ icon: Icon, ...skill }) => <article key={skill.title}><Icon/><p className="mono-label">{skill.scope}</p><h3>{skill.title}</h3><ul>{skill.items.map((item) => <li key={item}>{item}</li>)}</ul><div className="skill-links">{skill.links.map((slug) => <a key={slug} href={`#/projects/${slug}`}>{projects.find((project) => project.slug === slug)?.name}<ChevronRight size={13}/></a>)}</div></article>)}</div></Section>
+    <AutismoConectaCaseStudy language={language}/>
+    <Section eyebrow="05 / Education" title={t.education}><div className="education-grid"><article><p className="mono-label">Universidad Central de Chile</p><h3>Civil Engineering in Computing and Informatics</h3><p>{t.academicPending}</p><div className="tag-list">{['Algorithms', 'Java & OOP', 'Databases', 'Linux & Red Hat', 'Networking', 'Machine Learning', 'Arduino'].map((item) => <span key={item}>{item}</span>)}</div><p>{language === 'en' ? 'Teaching-assistant experience in Physics and Probability.' : 'Experiencia como ayudante en Física y Probabilidad.'}</p></article><article className="recognition-card"><p className="mono-label">Recognition · 2026</p><h3>NeuroFAST</h3><p>{language === 'en' ? 'Selected in the first national stage of the UDD Impacto Emprendedor 2026 competition and participated in formative activities. This does not mean the project won or has clinical validation.' : 'Seleccionado en la primera etapa nacional de Impacto Emprendedor UDD 2026 y participante en actividades formativas. Esto no significa que ganó ni que tenga validación clínica.'}</p><a className="text-link" href="#/projects/neurofast">{t.details}<ChevronRight size={15}/></a></article></div></Section>
+    <Section id="skills" eyebrow="06 / Evidence map" title={t.skills}><div className="skills-grid">{skills.map(({ icon: Icon, ...skill }) => <article key={skill.title}><Icon/><p className="mono-label">{skill.scope}</p><h3>{skill.title}</h3><ul>{skill.items.map((item) => <li key={item}>{item}</li>)}</ul><div className="skill-links">{skill.links.map((slug) => <a key={slug} href={`#/projects/${slug}`}>{projects.find((project) => project.slug === slug)?.name}<ChevronRight size={13}/></a>)}</div></article>)}</div></Section>
     <Contact language={language}/>
   </main>
 }
@@ -256,7 +298,7 @@ function ResumePage({ language }: { language: Language }) {
 
 function Contact({ language }: { language: Language }) {
   const t = copy[language]
-  return <section id="contact" className="contact-section"><div><p className="eyebrow">06 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/>Email</a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/>GitHub</a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/>LinkedIn</a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/>EF SET C1</a></div></section>
+  return <section id="contact" className="contact-section"><div><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/>Email</a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/>GitHub</a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/>LinkedIn</a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/>EF SET C1</a></div></section>
 }
 
 function Footer({ language }: { language: Language }) {

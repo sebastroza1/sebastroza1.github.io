@@ -11,6 +11,8 @@ test('home presents evidence and keyboard navigation', async ({ page }) => {
   await expect(page.getByText('Engineering evidence, not decorative claims.')).toBeVisible()
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
+  await expect(page.getByRole('heading', { name: 'Before / after performance evidence' })).toBeVisible()
+  await expect(page.getByText('Regression, although 0.062 remains below 0.1.')).toBeVisible()
 })
 
 test('project filters lead to a detailed case study', async ({ page }) => {
@@ -42,8 +44,8 @@ test('every published project card resolves to one unique detail route', async (
     elements.map((element) => element.getAttribute('href')).filter((href): href is string => Boolean(href)),
   )
   const uniqueLinks = [...new Set(links)]
-  expect(uniqueLinks).toHaveLength(16)
-  expect(links).toHaveLength(16)
+  expect(uniqueLinks).toHaveLength(18)
+  expect(links).toHaveLength(18)
 
   for (const href of uniqueLinks) {
     await page.goto(`/${href}`)

@@ -55,4 +55,20 @@ describe('portfolio interactions', () => {
     expect(screen.getAllByText('File not yet provided')).toHaveLength(4)
     expect(screen.queryByRole('link', { name: /download/i })).not.toBeInTheDocument()
   })
+
+  it('presents the bounded AutismoConecta performance case study', () => {
+    render(<App />)
+    expect(screen.getByRole('heading', { name: 'Before / after performance evidence' })).toBeInTheDocument()
+    expect(screen.getByText('Regression, although 0.062 remains below 0.1.')).toBeInTheDocument()
+    expect(screen.getByRole('link', { name: /Inspect performance lab/i })).toHaveAttribute('href', '#/projects/web-performance-evidence')
+  })
+
+  it('includes both new engineering labs without duplicating them', () => {
+    render(<ProjectExplorer language="en" />)
+    fireEvent.change(screen.getByLabelText('Search projects'), { target: { value: 'collaboration ops' } })
+    expect(screen.getAllByRole('heading', { name: 'Collaboration Ops Lab' })).toHaveLength(1)
+    fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
+    fireEvent.change(screen.getByLabelText('Search projects'), { target: { value: 'performance evidence' } })
+    expect(screen.getAllByRole('heading', { name: 'Web Performance Evidence Lab' })).toHaveLength(1)
+  })
 })
