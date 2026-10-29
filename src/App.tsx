@@ -51,7 +51,7 @@ const copy = {
 
 const experience = [
   {
-    company: 'AutismoConecta', period: { en: 'January 2026 — present', es: 'Enero 2026 — actualidad' },
+    company: 'AutismoConecta', period: { en: 'September 2026 — present', es: 'Septiembre 2026 — actualidad' },
     role: 'Software Engineer — Backend, QA & Infrastructure',
     description: {
       en: 'Early-stage Chilean social-impact technology startup connecting neurodivergent people and families with professionals, services and support resources.',
@@ -146,11 +146,13 @@ function Header({ language, setLanguage, theme, setTheme }: { language: Language
 function EvidenceVisual({ language }: { language: Language }) {
   return <figure className="evidence-visual" aria-labelledby="system-caption">
     <div className="visual-grid" aria-hidden="true">
+      <div className="visual-header"><span>SYS / EVIDENCE_PIPELINE</span><span className="trace-state">TRACEABLE</span></div>
       <div className="node node-a"><span>01</span><b>DATA</b><small>provenance</small></div>
       <div className="node node-b"><span>02</span><b>CODE</b><small>versioned</small></div>
       <div className="node node-c"><span>03</span><b>TEST</b><small>repeatable</small></div>
       <div className="node node-d"><span>04</span><b>RESULT</b><small>bounded</small></div>
       <svg viewBox="0 0 600 390" preserveAspectRatio="none"><path d="M105 90 C220 20 260 180 355 110 S485 160 510 85"/><path d="M110 300 C210 235 280 355 365 280 S470 230 515 300"/><path d="M110 92 L110 300 M510 85 L515 300"/></svg>
+      <div className="visual-footer"><span>PROVENANCE: LINKED</span><span>CLAIMS: BOUNDED</span></div>
     </div>
     <figcaption id="system-caption">{language === 'en' ? 'A simple evidence chain: provenance, implementation, tests and bounded results.' : 'Cadena simple de evidencia: procedencia, implementación, pruebas y resultados acotados.'}</figcaption>
   </figure>
@@ -219,11 +221,12 @@ function HomePage({ language }: { language: Language }) {
   return <main id="main-content">
     <section className="hero section-frame">
       <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><h1>{t.heroTitleA}<br/><em>{t.heroTitleB}</em></h1><p className="hero-lead">{t.heroBody}</p>
+        <div className="hero-domain-row" aria-label={language === 'en' ? 'Engineering focus areas' : 'Áreas de enfoque de ingeniería'}>{['ML systems', 'Infrastructure', 'Data integration', 'Full-stack'].map((area) => <span key={area}>{area}</span>)}</div>
         <div className="hero-actions"><a className="button primary" href="#/projects">{t.viewProjects}<ArrowRight size={17}/></a><a className="button secondary" href="#/resume">{t.resume}</a></div>
         <p className="availability"><Globe2 size={16}/>{t.availability}</p></div>
       <EvidenceVisual language={language}/>
     </section>
-    <section className="proof-band"><div><span className="proof-number">16</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">11</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
+    <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">11</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
     <Section eyebrow="01 / About" title={t.aboutTitle}><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
     <Section eyebrow="02 / Work" title={t.featured} className="featured-section"><p className="section-intro">{t.featuredBody}</p><div className="project-grid featured-grid">{featured.map((project) => <ProjectCard key={project.slug} project={project} language={language}/>)}</div><a className="button secondary section-cta" href="#/projects">{t.allProjects}<ArrowRight size={17}/></a></Section>
     <Section id="experience" eyebrow="03 / Timeline" title={t.experience}><div className="timeline">{experience.map((item, index) => <article key={item.company}><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div className="timeline-content"><div className="timeline-heading"><div><h3>{item.company}</h3><p>{item.role}</p></div><time>{item.period[language]}</time></div><p>{item.description[language]}</p><p>{item.details[language]}</p><div className="evidence-callout"><CheckCircle2 size={18}/><span>{item.result[language]}</span></div></div></article>)}</div></Section>

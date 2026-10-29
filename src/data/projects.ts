@@ -249,7 +249,7 @@ export const projects: Project[] = [
     evidence: ['Public source repository', 'OpenCV implementation'],
   },
   {
-    slug: 'ucen-ar-prototype', name: 'UCEN Augmented Reality Prototype', categories: ['software', 'research'],
+    slug: 'ucen-ar-prototype', name: 'Realidad Aumentada UCEN', categories: ['software', 'research'],
     kind: 'Academic experience', status: 'Academic prototype', repo: 'https://github.com/sebastroza1/Prototipo-Realidad-Aumentada-Ucen-2026-08-20_21-53-25',
     languages: ['C#'], technologies: ['Unity', 'AR Foundation', 'ARCore', 'Image tracking'],
     overview: { en: 'A demonstrative academic augmented-reality prototype built with Unity and image tracking.', es: 'Prototipo académico demostrativo de realidad aumentada con Unity e image tracking.' },

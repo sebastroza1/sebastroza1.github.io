@@ -17,7 +17,14 @@ describe('portfolio interactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Cambiar a español' }))
     expect(screen.getByRole('heading', { name: /Construyendo software confiable/i })).toBeInTheDocument()
     expect(screen.getByText('Experiencia profesional')).toBeInTheDocument()
+    expect(screen.getByText('Septiembre 2026 — actualidad')).toBeInTheDocument()
     expect(localStorage.getItem('portfolio-language')).toBe('es')
+  })
+
+  it('uses the corrected Spanish UCEN augmented-reality project name', () => {
+    render(<ProjectExplorer language="es" />)
+    fireEvent.change(screen.getByLabelText('Buscar proyectos'), { target: { value: 'realidad aumentada' } })
+    expect(screen.getByRole('heading', { name: 'Realidad Aumentada UCEN' })).toBeInTheDocument()
   })
 
   it('toggles the accessible color theme', () => {

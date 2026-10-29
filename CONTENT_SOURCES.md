@@ -16,7 +16,7 @@ When a higher-confidence source was unavailable, the site avoids a metric or use
 | Claim group | Source used | Public treatment |
 |---|---|---|
 | Name, location, contact links and international availability | Owner-provided portfolio brief | Published, except phone number |
-| AutismoConecta role, dates, responsibilities and 469 backend / 191 frontend test cycle | Owner-provided portfolio brief; private implementation details intentionally excluded | Published as professional experience, without infrastructure secrets or private code |
+| AutismoConecta role, September 2026 start, responsibilities and 469 backend / 191 frontend test cycle | Owner-provided portfolio brief and direct correction on 2026-10-29; private implementation details intentionally excluded | Published as professional experience, without infrastructure secrets or private code |
 | TRC Recruitme role, dates and approximately one-week completion of a one-month estimate | Owner-provided portfolio brief | Published without candidate CVs or personal data |
 | Universidad Central de Chile studies | Owner-provided portfolio brief | States academic requirements completed in 2026 and degree conferral pending |
 | Physics and Probability teaching-assistant experience | Owner-provided portfolio brief | Published without invented dates |

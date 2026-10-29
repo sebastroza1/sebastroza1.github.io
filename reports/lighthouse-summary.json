@@ -12,7 +12,7 @@
   "metrics": {
     "firstContentfulPaint": "1.4 s",
     "largestContentfulPaint": "1.4 s",
-    "totalBlockingTime": "30 ms",
+    "totalBlockingTime": "0 ms",
     "cumulativeLayoutShift": 0,
     "speedIndex": "1.4 s"
   },

@@ -17,7 +17,7 @@ Audit date: 2026-10-29. “Public repository” means the portfolio links to ins
 | Storage Performance & Observability | [storage-performance-observability](https://github.com/sebastroza1/storage-performance-observability), `reports/RESULTS.md`, commit `39089ee`, CI run `40822967312` | Cached Python I/O on one host; not an SLO or distributed-storage result |
 | NeuroFAST | Owner-provided thesis/project description and UDD 2026 first-stage selection | Private academic prototype; non-clinical and not a medical device |
 | Air Drum · Computer Vision | [bateria-peroles](https://github.com/sebastroza1/bateria-peroles) | Public implementation; third-party asset licensing still needs a release audit |
-| UCEN Augmented Reality Prototype | [Prototipo-Realidad-Aumentada-Ucen](https://github.com/sebastroza1/Prototipo-Realidad-Aumentada-Ucen-2026-08-20_21-53-25) | Demonstrative academic prototype; no institutional deployment claim |
+| Realidad Aumentada UCEN | [Prototipo-Realidad-Aumentada-Ucen](https://github.com/sebastroza1/Prototipo-Realidad-Aumentada-Ucen-2026-08-20_21-53-25) | Demonstrative academic prototype; no institutional deployment claim |
 | LandFinder Chile | Owner-provided work-in-progress description | Private and in development; no metrics or production claim |
 | Web Scraper FirstJob | [Web_Scraper_firstJob](https://github.com/sebastroza1/Web_Scraper_firstJob) | Public source; live-site stability and CI coverage not claimed |
 
