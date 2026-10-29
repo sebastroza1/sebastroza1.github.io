@@ -27,7 +27,7 @@ When a higher-confidence source was unavailable, the site avoids a metric or use
 
 ## Repository-derived claims
 
-The existing eleven ML and storage laboratory metrics, commit identifiers, workflow run identifiers, limitations and test counts were extracted from their public README/result artifacts and checked against the repositories listed in [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md). The two new engineering labs were validated locally before publication and remain labelled `Locally tested` until their first GitHub Actions runs pass.
+The existing eleven ML and storage laboratory metrics, commit identifiers, workflow run identifiers, limitations and test counts were extracted from their public README/result artifacts and checked against the repositories listed in [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md). The two new engineering labs were validated locally and by their first successful GitHub Actions runs before the portfolio update was published.
 
 Older academic repositories were used only for technologies and visible implementation structure. Where current execution or licensing was not revalidated, the site says so.
 
