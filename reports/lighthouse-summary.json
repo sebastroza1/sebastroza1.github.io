@@ -1,0 +1,20 @@
+{
+  "auditedAt": "2026-10-29",
+  "lighthouseVersion": "12.8.2",
+  "url": "http://127.0.0.1:4173/",
+  "mode": "local production preview, mobile lab simulation",
+  "scores": {
+    "performance": 100,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100
+  },
+  "metrics": {
+    "firstContentfulPaint": "1.4 s",
+    "largestContentfulPaint": "1.4 s",
+    "totalBlockingTime": "30 ms",
+    "cumulativeLayoutShift": 0,
+    "speedIndex": "1.4 s"
+  },
+  "note": "Synthetic local measurement; not production real-user monitoring."
+}
