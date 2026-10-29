@@ -20,7 +20,7 @@ Audit date: 2026-10-29. “Public repository” means the portfolio links to ins
 | NeuroFAST | Owner-provided thesis/project description and UDD 2026 first-stage selection | Private academic prototype; non-clinical and not a medical device |
 | Air Drum · Computer Vision | [bateria-peroles](https://github.com/sebastroza1/bateria-peroles) | Public implementation; third-party asset licensing still needs a release audit |
 | Realidad Aumentada UCEN | [Prototipo-Realidad-Aumentada-Ucen](https://github.com/sebastroza1/Prototipo-Realidad-Aumentada-Ucen-2026-08-20_21-53-25) | Demonstrative academic prototype; no institutional deployment claim |
-| LandFinder Chile | Owner-provided work-in-progress description | Private and in development; no metrics or production claim |
+| LandFinder Chile | Authenticated inspection of the private repository and implementation README on 2026-10-29 | Substantial local Vue/FastAPI/PostGIS implementation; repository remains private, tests were not independently rerun for this release, no remote deployment and no completed-MVP/property-catalogue claim |
 | Web Scraper FirstJob | [Web_Scraper_firstJob](https://github.com/sebastroza1/Web_Scraper_firstJob) | Public source; live-site stability and CI coverage not claimed |
 
 The catalogue contains 18 projects. Category filters are tags over the same records; they do not create duplicate project cards.

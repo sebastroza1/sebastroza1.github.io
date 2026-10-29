@@ -49,11 +49,20 @@ describe('portfolio interactions', () => {
     expect(within(cards[0]).getByRole('heading', { name: 'C++ File Integrity Toolkit' })).toBeInTheDocument()
   })
 
-  it('does not expose broken resume download links when PDFs are absent', () => {
+  it('publishes validated English and Spanish resume downloads', () => {
     window.location.hash = '#/resume'
     render(<App />)
-    expect(screen.getAllByText('File not yet provided')).toHaveLength(4)
-    expect(screen.queryByRole('link', { name: /download/i })).not.toBeInTheDocument()
+    const pdfLinks = screen.getAllByRole('link', { name: 'Download PDF' })
+    expect(pdfLinks).toHaveLength(2)
+    expect(pdfLinks[0]).toHaveAttribute('href', '/cv/Sebastian_Astroza_Software_Engineer_General_2026.pdf')
+    expect(screen.getAllByRole('link', { name: 'Editable DOCX' })).toHaveLength(2)
+  })
+
+  it('shows the professional portrait and exact contact destinations', () => {
+    render(<App />)
+    expect(screen.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })).toHaveAttribute('src', '/assets/sebastian-astroza-portrait.webp')
+    expect(screen.getByRole('link', { name: /sebastroza10@gmail.com/i })).toHaveAttribute('href', 'mailto:sebastroza10@gmail.com')
+    expect(screen.getByRole('link', { name: /LinkedIn — Sebastián Astroza/i })).toHaveAttribute('href', 'https://www.linkedin.com/in/sebastian-a-677745276/')
   })
 
   it('presents the bounded AutismoConecta performance case study', () => {

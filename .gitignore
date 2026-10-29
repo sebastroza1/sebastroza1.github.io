@@ -13,3 +13,5 @@ playwright.config.d.ts
 .env.*
 .DS_Store
 Thumbs.db
+/private-source/
+/tmp/

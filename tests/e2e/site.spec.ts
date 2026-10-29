@@ -32,10 +32,26 @@ test('language and theme choices survive navigation', async ({ page }) => {
   await expect(page.locator('html')).toHaveClass(/dark/)
 })
 
-test('resume route has no broken downloads', async ({ page }) => {
+test('resume route publishes four working downloadable artifacts', async ({ page, request }) => {
   await page.goto('/#/resume')
-  await expect(page.getByText('File not yet provided')).toHaveCount(4)
-  await expect(page.getByRole('main').getByRole('link')).toHaveCount(0)
+  const downloadLinks = page.getByRole('main').getByRole('link')
+  await expect(downloadLinks).toHaveCount(4)
+  const targets = await downloadLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')).filter(Boolean) as string[])
+  for (const target of targets) {
+    const response = await request.get(target)
+    expect(response.ok()).toBeTruthy()
+    expect((await response.body()).byteLength).toBeGreaterThan(10_000)
+  }
+})
+
+test('portrait and direct contact links are visible and correctly targeted', async ({ page }) => {
+  const portrait = page.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })
+  await expect(portrait).toBeVisible()
+  await expect(portrait).toHaveJSProperty('complete', true)
+  await page.getByRole('link', { name: /sebastroza10@gmail.com/i }).scrollIntoViewIfNeeded()
+  await expect(page.getByRole('link', { name: /sebastroza10@gmail.com/i })).toHaveAttribute('href', 'mailto:sebastroza10@gmail.com')
+  await expect(page.getByRole('link', { name: /LinkedIn — Sebastián Astroza/i })).toHaveAttribute('href', 'https://www.linkedin.com/in/sebastian-a-677745276/')
+  await expect(page.getByRole('link', { name: /github.com\/sebastroza1/i })).toHaveAttribute('href', 'https://github.com/sebastroza1')
 })
 
 test('every published project card resolves to one unique detail route', async ({ page }) => {

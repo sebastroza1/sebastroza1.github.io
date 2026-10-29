@@ -24,12 +24,17 @@ When a higher-confidence source was unavailable, the site avoids a metric or use
 | Physics and Probability teaching-assistant experience | Owner-provided portfolio brief | Published without invented dates |
 | NeuroFAST research scope and UDD 2026 first-stage selection | Owner-provided portfolio brief | Academic prototype; no win, diagnosis, device or clinical-validation claim |
 | Spanish, English, French and Portuguese levels | Owner-provided portfolio brief | English links to the provided EF SET certificate URL; no additional certificate files are hosted |
+| EF SET Global C1 and LFS158 Introduction to Kubernetes, October 2026 | Owner-provided portfolio brief; public EF SET credential URL supplied | EF SET links to the public credential; LFS158 is described as course completion, not production Kubernetes experience |
+| Professional portrait | Owner-provided photograph on 2026-10-29 | Processed locally for background isolation and WebP delivery; no external editing service used and no facial features were generated |
+| Resume structure and presentation | [Harvard FAS Mignone Center resume guidance](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/) reviewed 2026-10-29 | Concise, fact-based, easy-to-scan, reverse-chronological, consistent and photo-free single-column documents; “Harvard-style” is a design convention, not an institutional endorsement |
 
 ## Repository-derived claims
 
 The existing eleven ML and storage laboratory metrics, commit identifiers, workflow run identifiers, limitations and test counts were extracted from their public README/result artifacts and checked against the repositories listed in [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md). The two new engineering labs were validated locally and by their first successful GitHub Actions runs before the portfolio update was published.
 
 Older academic repositories were used only for technologies and visible implementation structure. Where current execution or licensing was not revalidated, the site says so.
+
+LandFinder Chile was inspected through authenticated read access to its private repository and README. The portfolio summarizes implemented architecture and documented capabilities, but deliberately publishes no private source link, secrets or internal files. It remains labelled in development, not deployed and not a completed MVP.
 
 ## Deliberately excluded
 
