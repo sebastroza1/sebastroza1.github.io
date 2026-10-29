@@ -30,6 +30,7 @@ npm run typecheck
 npm test
 npm run build
 npm run e2e
+python scripts/validate_resume_artifacts.py
 ```
 
-Review outbound links, the four resume slots, dependency updates, mobile layout and both languages before each release.
+Review outbound links, all four resume artifacts (English/Spanish PDF and DOCX), the portrait, dependency updates, mobile layout and both interface languages before each release. Regenerate CVs only from `scripts/generate_resumes.py`, re-export with `scripts/export_resumes.ps1`, inspect every PDF page and rerun the artifact validator before publishing.

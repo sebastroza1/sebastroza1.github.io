@@ -25,16 +25,16 @@ git push -u origin main
 
 Never force-push for deployment. The workflow is the deployment mechanism; `dist/` is not committed.
 
-## Resume PDFs
+## Resume artifacts
 
-The downloads stay disabled until these exact files are copied into `public/cv/` and opened successfully:
+The site publishes four verified files under `public/cv/`:
 
-- `Sebastian_Astroza_CERN_Machine_Learning_Engineer_2026.pdf`
-- `Sebastian_Astroza_CERN_Distributed_Storage_Engineer_2026.pdf`
-- `Sebastian_Astroza_CERN_Full_Stack_Software_Developer_2026.pdf`
-- `Sebastian_Astroza_CERN_Junior_Automation_Controls_Engineer_2026.pdf`
+- `Sebastian_Astroza_Software_Engineer_General_2026.pdf`
+- `Sebastian_Astroza_Software_Engineer_General_2026.docx`
+- `Sebastian_Astroza_CV_General_2026_ES.pdf`
+- `Sebastian_Astroza_CV_General_2026_ES.docx`
 
-After adding them, update the resume configuration in `src/App.tsx`, run the complete test suite, and verify all four URLs in the production deployment. Do not host institutional certificates without explicit authorization.
+Before deployment, run `python scripts/validate_resume_artifacts.py`, confirm each URL returns a non-empty file and visually inspect every PDF page. Do not host institutional certificates without explicit authorization.
 
 ## Rollback
 

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, ArrowLeft, ArrowRight, Bot, Braces, CheckCircle2, ChevronRight, CircleDot,
-  Database, Download, ExternalLink, FileWarning, Github, Globe2, Languages,
+  Database, Download, ExternalLink, Github, Globe2, Languages,
   Gauge, Linkedin, Mail, Menu, Moon, Network, Search, Server, ShieldCheck, Sun, TestTube2, X,
 } from 'lucide-react'
 import { allLanguages, allTechnologies, categoryLabels, projects, type Category, type Language, type Project } from './data/projects'
@@ -13,7 +13,7 @@ const copy = {
     nav: { home: 'Home', projects: 'Projects', experience: 'Experience', skills: 'Skills', resume: 'Resume', contact: 'Contact' },
     heroKicker: 'Software · Systems · Applied AI',
     heroTitleA: 'Building reliable software', heroTitleB: 'and applied AI.',
-    heroBody: 'Early-career software engineer working across machine learning, infrastructure, data integration and full-stack development.',
+    heroBody: 'Software engineer combining professional full-stack, Linux, QA and data-integration experience with inspectable projects in applied AI and systems engineering.',
     viewProjects: 'View projects', resume: 'Resume', availability: 'Santiago, Chile · Open to international opportunities and relocation',
     proofTitle: 'Engineering evidence, not decorative claims.',
     proofBody: 'Every public project is tied to source code, tests, documented results and explicit limitations. Synthetic data and unverified runtime paths remain labelled as such.',
@@ -26,15 +26,15 @@ const copy = {
     allProjects: 'Explore all projects', filters: 'Filter the evidence', search: 'Search projects', category: 'Area', language: 'Language', tech: 'Technology', kind: 'Type', status: 'Status', all: 'All', clear: 'Clear filters', noResults: 'No projects match these filters.',
     results: 'Verified result', limitations: 'Limitations', evidence: 'Evidence', details: 'View case study', repository: 'GitHub repository', docs: 'Evidence document',
     overview: 'Overview', problem: 'Problem', contribution: 'My contribution', architecture: 'Architecture', implementation: 'Implementation', challenges: 'Engineering challenges', testing: 'Testing', learned: 'What I learned', back: 'Back to projects',
-    resumeTitle: 'Role-focused resumes', resumeBody: 'The four PDF files were not present during this build, so the site intentionally exposes no broken download links. Add the reviewed files under public/cv/ using the exact names below.', unavailable: 'File not yet provided',
-    contactTitle: 'Let’s discuss useful engineering work.', contactBody: 'Available for early-career software, applied AI, infrastructure and research-engineering opportunities.',
+    resumeTitle: 'General software engineering resume', resumeBody: 'A recruiter-ready, ATS-oriented resume with selectable text, visible links and an editable DOCX. Choose the English or Spanish edition.',
+    contactTitle: 'Let’s build useful, reliable systems.', contactBody: 'Open to software engineering, full-stack, infrastructure, data, automation, applied AI and research-engineering opportunities in Chile or internationally.',
     academicPending: 'Academic requirements completed in 2026 · degree conferral pending',
   },
   es: {
     nav: { home: 'Inicio', projects: 'Proyectos', experience: 'Experiencia', skills: 'Competencias', resume: 'CV', contact: 'Contacto' },
     heroKicker: 'Software · Sistemas · IA aplicada',
     heroTitleA: 'Construyendo software confiable', heroTitleB: 'e IA aplicada.',
-    heroBody: 'Ingeniero de software en etapa inicial trabajando en machine learning, infraestructura, integración de datos y desarrollo full-stack.',
+    heroBody: 'Ingeniero de software que combina experiencia profesional en full-stack, Linux, QA e integración de datos con proyectos inspeccionables en IA aplicada e ingeniería de sistemas.',
     viewProjects: 'Ver proyectos', resume: 'Currículum', availability: 'Santiago, Chile · Disponible para oportunidades internacionales y reubicación',
     proofTitle: 'Evidencia de ingeniería, no afirmaciones decorativas.',
     proofBody: 'Cada proyecto público se vincula con código, pruebas, resultados documentados y limitaciones explícitas. Los datos sintéticos y rutas no verificadas permanecen identificados.',
@@ -47,8 +47,8 @@ const copy = {
     allProjects: 'Explorar todos los proyectos', filters: 'Filtrar la evidencia', search: 'Buscar proyectos', category: 'Área', language: 'Lenguaje', tech: 'Tecnología', kind: 'Tipo', status: 'Estado', all: 'Todos', clear: 'Limpiar filtros', noResults: 'Ningún proyecto coincide con estos filtros.',
     results: 'Resultado verificado', limitations: 'Limitaciones', evidence: 'Evidencia', details: 'Ver caso de estudio', repository: 'Repositorio GitHub', docs: 'Documento de evidencia',
     overview: 'Resumen', problem: 'Problema', contribution: 'Mi contribución', architecture: 'Arquitectura', implementation: 'Implementación', challenges: 'Desafíos de ingeniería', testing: 'Pruebas', learned: 'Qué aprendí', back: 'Volver a proyectos',
-    resumeTitle: 'CV orientados por rol', resumeBody: 'Los cuatro PDF no estaban disponibles durante esta construcción, por lo que el sitio no expone enlaces rotos. Agrega los archivos revisados bajo public/cv/ con los nombres exactos indicados.', unavailable: 'Archivo aún no proporcionado',
-    contactTitle: 'Conversemos sobre ingeniería útil.', contactBody: 'Disponible para oportunidades iniciales en software, IA aplicada, infraestructura e ingeniería de investigación.',
+    resumeTitle: 'Currículum general de ingeniería de software', resumeBody: 'Un CV listo para reclutamiento y orientado a ATS, con texto seleccionable, enlaces visibles y DOCX editable. Elige la edición en español o inglés.',
+    contactTitle: 'Construyamos sistemas útiles y confiables.', contactBody: 'Disponible para oportunidades en ingeniería de software, full-stack, infraestructura, datos, automatización, IA aplicada e ingeniería de investigación en Chile o el extranjero.',
     academicPending: 'Requisitos académicos completados en 2026 · otorgamiento de grado pendiente',
   },
 } as const
@@ -92,20 +92,27 @@ const performanceMetrics = [
 ]
 
 const skills = [
-  { icon: CircleDot, title: 'Machine Learning', scope: 'Independent + academic', items: ['Python', 'PyTorch', 'TensorFlow/Keras', 'scikit-learn', 'MLflow', 'Model evaluation'], links: ['mlops-gpu-benchmark-lab', 'scientific-anomaly-detection'] },
-  { icon: Braces, title: 'Software Development', scope: 'Professional + independent', items: ['PHP', 'Laravel', 'TypeScript', 'Angular', 'Next.js', 'FastAPI', 'Flutter'], links: ['ml-model-serving-ops', 'web-scraper-firstjob'] },
-  { icon: Server, title: 'Systems Engineering', scope: 'Professional + independent', items: ['Linux', 'Red Hat labs', 'Docker', 'Networking', 'Identity reconciliation', 'Bash'], links: ['collaboration-ops-lab', 'rhel-network-operations-lab'] },
-  { icon: Database, title: 'Data Engineering', scope: 'Professional + independent', items: ['SQL', 'PostgreSQL/PostGIS', 'MySQL', 'Firebase/Firestore', 'ETL', 'REST APIs'], links: ['dataset-quality-calibration-lab', 'landfinder-chile'] },
-  { icon: TestTube2, title: 'Quality & Automation', scope: 'Professional + independent', items: ['Git', 'GitHub Actions', 'Web performance', 'Postman', 'pytest', 'Scrum', 'n8n'], links: ['web-performance-evidence', 'storage-performance-observability'] },
-  { icon: Network, title: 'Research & Prototyping', scope: 'Academic', items: ['OpenCV', 'Unity', 'C#', 'AR Foundation', 'Arduino', 'Scientific evaluation'], links: ['neurofast', 'bateria-peroles'] },
+  { icon: Braces, title: { en: 'Software Engineering & Full-Stack', es: 'Ingeniería de software y full-stack' }, scope: { en: 'Professional + independent evidence', es: 'Evidencia profesional + independiente' }, items: ['PHP', 'Laravel', 'JavaScript/TypeScript', 'Angular', 'Next.js', 'Vue 3', 'FastAPI', 'REST APIs', 'Flutter'], links: ['ml-model-serving-ops', 'landfinder-chile'] },
+  { icon: Server, title: { en: 'Infrastructure & DevOps', es: 'Infraestructura y DevOps' }, scope: { en: 'Professional practice + labs', es: 'Práctica profesional + laboratorios' }, items: ['Linux', 'Nginx', 'PHP-FPM', 'Docker', 'GitHub Actions', 'CI/CD', 'Bash', 'PowerShell', 'Networking', 'Observability', 'Kubernetes training'], links: ['rhel-network-operations-lab', 'storage-performance-observability'] },
+  { icon: Database, title: { en: 'Databases & Data Engineering', es: 'Bases de datos e ingeniería de datos' }, scope: { en: 'Professional + project evidence', es: 'Evidencia profesional + proyectos' }, items: ['PostgreSQL/PostGIS', 'MySQL', 'SQL', 'Firebase/Firestore', 'ETL', 'Geospatial data', 'Pandas', 'NumPy'], links: ['dataset-quality-calibration-lab', 'landfinder-chile'] },
+  { icon: TestTube2, title: { en: 'Quality, Security & Automation', es: 'Calidad, seguridad y automatización' }, scope: { en: 'Professional + reproducible labs', es: 'Profesional + laboratorios reproducibles' }, items: ['pytest', 'Selenium', 'Postman', 'Playwright', 'n8n', 'Web performance', 'Dry-run safety', 'Least privilege'], links: ['web-performance-evidence', 'collaboration-ops-lab'] },
+  { icon: CircleDot, title: { en: 'AI & Machine Learning', es: 'IA y machine learning' }, scope: { en: 'Independent + academic evidence', es: 'Evidencia independiente + académica' }, items: ['Python', 'PyTorch', 'TensorFlow/Keras', 'scikit-learn', 'MLflow', 'OpenCV', 'Model evaluation', 'Synthetic data'], links: ['mlops-gpu-benchmark-lab', 'scientific-anomaly-detection'] },
+  { icon: Network, title: { en: 'Systems, Research & Prototyping', es: 'Sistemas, investigación y prototipado' }, scope: { en: 'Academic + independent evidence', es: 'Evidencia académica + independiente' }, items: ['C++17/20', 'CMake', 'Unity', 'C#', 'AR Foundation', 'Arduino', 'Scientific evaluation'], links: ['cpp-file-integrity-toolkit', 'neurofast'] },
+  { icon: ShieldCheck, title: { en: 'Collaboration Platforms', es: 'Plataformas de colaboración' }, scope: { en: 'Microsoft 365 exposure; Graph/Entra lab only', es: 'Exposición a Microsoft 365; Graph/Entra solo en laboratorio' }, items: ['Microsoft 365', 'Graph concepts', 'Entra concepts', 'Identity reconciliation', 'Audit trails', 'Idempotent planning'], links: ['collaboration-ops-lab'] },
 ]
 
-const resumes = [
-  'Sebastian_Astroza_CERN_Machine_Learning_Engineer_2026.pdf',
-  'Sebastian_Astroza_CERN_Distributed_Storage_Engineer_2026.pdf',
-  'Sebastian_Astroza_CERN_Full_Stack_Software_Developer_2026.pdf',
-  'Sebastian_Astroza_CERN_Junior_Automation_Controls_Engineer_2026.pdf',
-]
+const resumes = {
+  en: {
+    label: 'English edition', description: 'General Software Engineer · 1 page',
+    pdf: 'Sebastian_Astroza_Software_Engineer_General_2026.pdf',
+    docx: 'Sebastian_Astroza_Software_Engineer_General_2026.docx',
+  },
+  es: {
+    label: 'Edición en español', description: 'Ingeniería de Software General · 2 páginas',
+    pdf: 'Sebastian_Astroza_CV_General_2026_ES.pdf',
+    docx: 'Sebastian_Astroza_CV_General_2026_ES.docx',
+  },
+} as const
 
 function useRoute() {
   const [hash, setHash] = useState(window.location.hash || '#/')
@@ -156,18 +163,22 @@ function Header({ language, setLanguage, theme, setTheme }: { language: Language
   </header>
 }
 
-function EvidenceVisual({ language }: { language: Language }) {
-  return <figure className="evidence-visual" aria-labelledby="system-caption">
-    <div className="visual-grid" aria-hidden="true">
-      <div className="visual-header"><span>SYS / EVIDENCE_PIPELINE</span><span className="trace-state">TRACEABLE</span></div>
-      <div className="node node-a"><span>01</span><b>DATA</b><small>provenance</small></div>
-      <div className="node node-b"><span>02</span><b>CODE</b><small>versioned</small></div>
-      <div className="node node-c"><span>03</span><b>TEST</b><small>repeatable</small></div>
-      <div className="node node-d"><span>04</span><b>RESULT</b><small>bounded</small></div>
-      <svg viewBox="0 0 600 390" preserveAspectRatio="none"><path d="M105 90 C220 20 260 180 355 110 S485 160 510 85"/><path d="M110 300 C210 235 280 355 365 280 S470 230 515 300"/><path d="M110 92 L110 300 M510 85 L515 300"/></svg>
-      <div className="visual-footer"><span>PROVENANCE: LINKED</span><span>CLAIMS: BOUNDED</span></div>
+function HeroPortrait({ language }: { language: Language }) {
+  return <figure className="hero-portrait" aria-labelledby="portrait-caption">
+    <div className="portrait-frame">
+      <div className="portrait-status"><span>PROFILE / 2026</span><span className="trace-state">AVAILABLE</span></div>
+      <img
+        src="/assets/sebastian-astroza-portrait.webp"
+        alt={language === 'en' ? 'Portrait of Sebastián Astroza wearing a blue shirt' : 'Retrato de Sebastián Astroza con camisa azul'}
+        width="900"
+        height="1059"
+        fetchPriority="high"
+      />
+      <div className="portrait-proof" aria-label={language === 'en' ? 'Professional focus' : 'Enfoque profesional'}>
+        <span>FULL-STACK</span><span>LINUX</span><span>DATA</span><span>APPLIED AI</span>
+      </div>
     </div>
-    <figcaption id="system-caption">{language === 'en' ? 'A simple evidence chain: provenance, implementation, tests and bounded results.' : 'Cadena simple de evidencia: procedencia, implementación, pruebas y resultados acotados.'}</figcaption>
+    <figcaption id="portrait-caption">{language === 'en' ? 'Software engineer in Santiago, Chile · evidence-led portfolio.' : 'Ingeniero de software en Santiago, Chile · portafolio basado en evidencia.'}</figcaption>
   </figure>
 }
 
@@ -265,7 +276,7 @@ function HomePage({ language }: { language: Language }) {
         <div className="hero-domain-row" aria-label={language === 'en' ? 'Engineering focus areas' : 'Áreas de enfoque de ingeniería'}>{['ML systems', 'Infrastructure', 'Data integration', 'Full-stack'].map((area) => <span key={area}>{area}</span>)}</div>
         <div className="hero-actions"><a className="button primary" href="#/projects">{t.viewProjects}<ArrowRight size={17}/></a><a className="button secondary" href="#/resume">{t.resume}</a></div>
         <p className="availability"><Globe2 size={16}/>{t.availability}</p></div>
-      <EvidenceVisual language={language}/>
+      <HeroPortrait language={language}/>
     </section>
     <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">13</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
     <Section eyebrow="01 / About" title={t.aboutTitle}><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
@@ -273,7 +284,7 @@ function HomePage({ language }: { language: Language }) {
     <Section id="experience" eyebrow="03 / Timeline" title={t.experience}><div className="timeline">{experience.map((item, index) => <article key={item.company}><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div className="timeline-content"><div className="timeline-heading"><div><h3>{item.company}</h3><p>{item.role}</p></div><time>{item.period[language]}</time></div><p>{item.description[language]}</p><p>{item.details[language]}</p><div className="evidence-callout"><CheckCircle2 size={18}/><span>{item.result[language]}</span></div></div></article>)}</div></Section>
     <AutismoConectaCaseStudy language={language}/>
     <Section eyebrow="05 / Education" title={t.education}><div className="education-grid"><article><p className="mono-label">Universidad Central de Chile</p><h3>Civil Engineering in Computing and Informatics</h3><p>{t.academicPending}</p><div className="tag-list">{['Algorithms', 'Java & OOP', 'Databases', 'Linux & Red Hat', 'Networking', 'Machine Learning', 'Arduino'].map((item) => <span key={item}>{item}</span>)}</div><p>{language === 'en' ? 'Teaching-assistant experience in Physics and Probability.' : 'Experiencia como ayudante en Física y Probabilidad.'}</p></article><article className="recognition-card"><p className="mono-label">Recognition · 2026</p><h3>NeuroFAST</h3><p>{language === 'en' ? 'Selected in the first national stage of the UDD Impacto Emprendedor 2026 competition and participated in formative activities. This does not mean the project won or has clinical validation.' : 'Seleccionado en la primera etapa nacional de Impacto Emprendedor UDD 2026 y participante en actividades formativas. Esto no significa que ganó ni que tenga validación clínica.'}</p><a className="text-link" href="#/projects/neurofast">{t.details}<ChevronRight size={15}/></a></article></div></Section>
-    <Section id="skills" eyebrow="06 / Evidence map" title={t.skills}><div className="skills-grid">{skills.map(({ icon: Icon, ...skill }) => <article key={skill.title}><Icon/><p className="mono-label">{skill.scope}</p><h3>{skill.title}</h3><ul>{skill.items.map((item) => <li key={item}>{item}</li>)}</ul><div className="skill-links">{skill.links.map((slug) => <a key={slug} href={`#/projects/${slug}`}>{projects.find((project) => project.slug === slug)?.name}<ChevronRight size={13}/></a>)}</div></article>)}</div></Section>
+    <Section id="skills" eyebrow="06 / Evidence map" title={t.skills}><div className="skills-grid">{skills.map(({ icon: Icon, ...skill }) => <article key={skill.title.en}><Icon/><p className="mono-label">{skill.scope[language]}</p><h3>{skill.title[language]}</h3><ul>{skill.items.map((item) => <li key={item}>{item}</li>)}</ul><div className="skill-links">{skill.links.map((slug) => <a key={slug} href={`#/projects/${slug}`}>{projects.find((project) => project.slug === slug)?.name}<ChevronRight size={13}/></a>)}</div></article>)}</div></Section>
     <Contact language={language}/>
   </main>
 }
@@ -293,16 +304,20 @@ function ProjectDetail({ project, language }: { project: Project; language: Lang
 
 function ResumePage({ language }: { language: Language }) {
   const t = copy[language]
-  return <main id="main-content" className="page-main"><header className="page-hero"><p className="eyebrow">Resume library</p><h1>{t.resumeTitle}</h1><p>{t.resumeBody}</p></header><div className="resume-grid">{resumes.map((filename, index) => <article key={filename}><FileWarning/><p className="mono-label">{String(index + 1).padStart(2, '0')} · PDF</p><h2>{filename.replace('Sebastian_Astroza_CERN_', '').replace('_2026.pdf', '').replaceAll('_', ' ')}</h2><code>public/cv/{filename}</code><span className="unavailable"><FileWarning size={15}/>{t.unavailable}</span></article>)}</div><div className="resume-note"><Download/><div><h2>{language === 'en' ? 'Publication gate' : 'Gate de publicación'}</h2><p>{language === 'en' ? 'Before enabling a download, each PDF must exist, open successfully and be confirmed as the latest distributable version. Academic documents and references are available on request and are not published here.' : 'Antes de habilitar descargas, cada PDF debe existir, abrir correctamente y confirmarse como la versión distribuible más reciente. Documentos académicos y referencias están disponibles a solicitud y no se publican aquí.'}</p></div></div></main>
+  const editions: Language[] = [language, language === 'en' ? 'es' : 'en']
+  return <main id="main-content" className="page-main"><header className="page-hero"><p className="eyebrow">Resume / CV</p><h1>{t.resumeTitle}</h1><p>{t.resumeBody}</p></header><div className="resume-grid">{editions.map((edition, index) => {
+    const resume = resumes[edition]
+    return <article className={index === 0 ? 'resume-primary' : ''} key={edition}><Download/><p className="mono-label">{index === 0 ? (language === 'en' ? 'Primary download' : 'Descarga principal') : (language === 'en' ? 'Alternate language' : 'Idioma alternativo')}</p><h2>{resume.label}</h2><p>{resume.description}</p><div className="resume-actions"><a className="button primary" href={`/cv/${resume.pdf}`} download><Download size={16}/>{language === 'en' ? 'Download PDF' : 'Descargar PDF'}</a><a className="button secondary" href={`/cv/${resume.docx}`} download>{language === 'en' ? 'Editable DOCX' : 'DOCX editable'}</a></div><code>{resume.pdf}</code></article>
+  })}</div><div className="resume-note"><ShieldCheck/><div><h2>{language === 'en' ? 'Validated publication files' : 'Archivos de publicación validados'}</h2><p>{language === 'en' ? 'Both editions use selectable text, a linear ATS-friendly reading order, visible clickable links and professional metadata. The DOCX files remain fully editable; the resume intentionally contains no photograph.' : 'Ambas ediciones usan texto seleccionable, lectura lineal orientada a ATS, enlaces visibles y clicables, y metadatos profesionales. Los DOCX siguen totalmente editables; el CV no incluye fotografía de forma intencional.'}</p></div></div></main>
 }
 
 function Contact({ language }: { language: Language }) {
   const t = copy[language]
-  return <section id="contact" className="contact-section"><div><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/>Email</a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/>GitHub</a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/>LinkedIn</a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/>EF SET C1</a></div></section>
+  return <section id="contact" className="contact-section"><div><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/><span><small>{language === 'en' ? 'Email' : 'Correo'}</small>sebastroza10@gmail.com</span></a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/><span><small>LinkedIn</small>LinkedIn — Sebastián Astroza</span></a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/><span><small>GitHub</small>github.com/sebastroza1</span></a><a href="https://sebastroza1.github.io/" target="_blank" rel="noreferrer"><Globe2/><span><small>{language === 'en' ? 'Portfolio' : 'Portafolio'}</small>sebastroza1.github.io</span></a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/><span><small>English credential</small>EF SET · Global C1</span></a></div></section>
 }
 
 function Footer({ language }: { language: Language }) {
-  return <footer><div><b>Sebastián Andrés Astroza Aguayo</b><span>Early-Career Software Engineer · Santiago, Chile</span></div><p>{language === 'en' ? 'Independent portfolio. No affiliation with CERN is implied.' : 'Portafolio independiente. No implica afiliación con CERN.'}</p><span>© 2026</span></footer>
+  return <footer><div><b>Sebastián Andrés Astroza Aguayo</b><span>Software Engineer · Santiago, Chile</span></div><p>{language === 'en' ? 'Independent portfolio. No affiliation with CERN is implied.' : 'Portafolio independiente. No implica afiliación con CERN.'}</p><span>© 2026</span></footer>
 }
 
 export default function App() {
