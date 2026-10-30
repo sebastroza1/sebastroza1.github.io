@@ -4,6 +4,7 @@ coverage/
 playwright-report/
 test-results/
 /reports/lighthouse.json
+/reports/motion-v3/*/run-*.json
 *.tsbuildinfo
 vite.config.js
 vite.config.d.ts

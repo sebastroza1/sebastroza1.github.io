@@ -1,0 +1,37 @@
+[
+  {
+    "checkpoint": 0,
+    "elapsed": 143,
+    "opacity": "",
+    "transform": "",
+    "className": "route-shell"
+  },
+  {
+    "checkpoint": 120,
+    "elapsed": 631,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell"
+  },
+  {
+    "checkpoint": 250,
+    "elapsed": 917,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell"
+  },
+  {
+    "checkpoint": 400,
+    "elapsed": 1060,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell"
+  },
+  {
+    "checkpoint": 650,
+    "elapsed": 1214,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell"
+  }
+]
