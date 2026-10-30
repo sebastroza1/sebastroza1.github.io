@@ -1,0 +1,37 @@
+[
+  {
+    "checkpoint": 0,
+    "elapsed": 184,
+    "opacity": "0.760105",
+    "transform": "matrix(0.998081, 0, 0, 0.998081, 0, -4.7979)",
+    "className": "route-shell route-exiting"
+  },
+  {
+    "checkpoint": 120,
+    "elapsed": 633,
+    "opacity": "0.952851",
+    "transform": "matrix(0.999623, 0, 0, 0.999623, 0, 1.41446)",
+    "className": "route-shell route-entering"
+  },
+  {
+    "checkpoint": 250,
+    "elapsed": 878,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell route-idle"
+  },
+  {
+    "checkpoint": 400,
+    "elapsed": 1053,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell route-idle"
+  },
+  {
+    "checkpoint": 650,
+    "elapsed": 1164,
+    "opacity": "1",
+    "transform": "none",
+    "className": "route-shell route-idle"
+  }
+]

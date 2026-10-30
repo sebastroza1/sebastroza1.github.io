@@ -85,7 +85,9 @@ test('contact email can be copied without hiding the written address', async ({ 
 
 test('every published project card resolves to one unique detail route', async ({ page }) => {
   await page.goto('/#/projects')
-  const links = await page.locator('a[href^="#/projects/"]').evaluateAll((elements) =>
+  const projectLinks = page.locator('a[href^="#/projects/"]')
+  await expect(projectLinks).toHaveCount(19)
+  const links = await projectLinks.evaluateAll((elements) =>
     elements.map((element) => element.getAttribute('href')).filter((href): href is string => Boolean(href)),
   )
   const uniqueLinks = [...new Set(links)]
@@ -141,22 +143,48 @@ test('increased text size preserves navigation and avoids horizontal scrolling',
 test('scroll reveal and route transitions activate without blocking content', async ({ page }) => {
   const proofBand = page.locator('.proof-band')
   await expect(proofBand).toHaveClass(/reveal-target/)
+  await expect(proofBand).toHaveAttribute('data-motion', 'panel')
   await proofBand.scrollIntoViewIfNeeded()
   await expect(proofBand).toHaveClass(/is-visible/)
 
-  await page.evaluate(() => {
-    const documentWithTransitions = document as Document & { startViewTransition?: (callback: () => void) => unknown }
-    const transition = documentWithTransitions.startViewTransition?.bind(document)
-    ;(window as typeof window & { transitionCount: number }).transitionCount = 0
-    if (transition) documentWithTransitions.startViewTransition = (callback) => {
-      ;(window as typeof window & { transitionCount: number }).transitionCount += 1
-      return transition(callback)
-    }
-  })
+  const shell = page.locator('.route-shell')
   await page.getByRole('link', { name: 'View projects' }).click()
-  await expect(page.locator('.route-shell')).toBeVisible()
+  await expect(shell).toHaveClass(/route-exiting/)
+  await page.waitForTimeout(90)
+  expect(Number(await shell.evaluate((element) => getComputedStyle(element).opacity))).toBeLessThan(1)
+  await expect(page.getByRole('heading', { name: 'Projects built to be inspected.' })).toBeVisible()
+  await expect(shell).toHaveClass(/route-(entering|idle)/)
   await expect(page.locator('.nav-links button').filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page')
-  await expect.poll(() => page.evaluate(() => (window as typeof window & { transitionCount: number }).transitionCount)).toBeGreaterThan(0)
+  await expect(page.locator('.nav-items')).toHaveAttribute('data-has-active', 'true')
+})
+
+test('motion system differentiates component families and animates metric evidence', async ({ page }) => {
+  await expect(page.locator('.section-title').first()).toHaveAttribute('data-motion', 'title')
+  await expect(page.locator('.featured-grid .project-card').first()).toHaveAttribute('data-motion', 'card')
+  await expect(page.locator('.timeline article').first()).toHaveAttribute('data-motion', 'timeline')
+  await expect(page.locator('.skills-grid article').first()).toHaveAttribute('data-motion', 'skill')
+  const performance = page.locator('.performance-panel')
+  await expect(performance).toHaveAttribute('data-motion', 'metrics')
+  await performance.scrollIntoViewIfNeeded()
+  await expect(performance).toHaveClass(/is-visible/)
+  await expect.poll(() => performance.locator('.metric-bars > span').first().evaluate((element) => getComputedStyle(element).transform)).not.toContain('matrix(0')
+})
+
+test('navigation indicator follows the active destination', async ({ page }, testInfo) => {
+  const indicator = page.locator('.nav-indicator')
+  const mobile = testInfo.project.name.includes('mobile')
+  if (mobile) await page.getByRole('button', { name: 'Open navigation' }).click()
+  const homePosition = await indicator.evaluate((element) => {
+    const rect = element.getBoundingClientRect()
+    return { x: rect.x, y: rect.y }
+  })
+  if (mobile) await page.getByRole('button', { name: 'Projects' }).click()
+  else await page.getByRole('link', { name: 'View projects' }).click()
+  await expect(page.locator('.nav-links button').filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page')
+  if (mobile) {
+    await page.getByRole('button', { name: 'Open navigation' }).click()
+    await expect.poll(() => indicator.evaluate((element) => element.getBoundingClientRect().y)).toBeGreaterThan(homePosition.y + 10)
+  } else await expect.poll(() => indicator.evaluate((element) => element.getBoundingClientRect().x)).toBeGreaterThan(homePosition.x + 10)
 })
 
 test('floating navigation compacts on scroll without covering the content', async ({ page }) => {
@@ -257,6 +285,8 @@ test('reduced motion keeps revealed content visible and navigation usable', asyn
 test('project cards use a real single-column mobile composition', async ({ page }, testInfo) => {
   await page.goto('/#/projects')
   const cards = page.locator('.project-card')
+  await expect(cards).toHaveCount(19)
+  await cards.first().scrollIntoViewIfNeeded()
   const first = await cards.nth(0).boundingBox()
   const second = await cards.nth(1).boundingBox()
   expect(first).not.toBeNull()

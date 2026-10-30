@@ -7,7 +7,7 @@ import {
 import { allLanguages, allTechnologies, categoryLabels, projects, type Category, type Language, type Project } from './data/projects'
 
 type Theme = 'light' | 'dark'
-type TransitionDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } }
+type RoutePhase = 'idle' | 'exiting' | 'entering'
 
 const copy = {
   en: {
@@ -114,20 +114,42 @@ const resumes = {
 } as const
 
 function useRoute() {
-  const [hash, setHash] = useState(window.location.hash || '#/')
+  const initialRoute = (window.location.hash || '#/').replace(/^#/, '')
+  const [route, setRoute] = useState(initialRoute)
+  const [phase, setPhase] = useState<RoutePhase>('idle')
+  const displayedRoute = useRef(initialRoute)
+  const exitTimer = useRef<number | undefined>(undefined)
+  const enterTimer = useRef<number | undefined>(undefined)
   useEffect(() => {
     const listener = () => {
-      const update = () => setHash(window.location.hash || '#/')
-      const transitionDocument = document as TransitionDocument
-      const isSectionNavigation = window.location.hash.startsWith('#/#')
-      if (!isSectionNavigation && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && transitionDocument.startViewTransition) {
-        transitionDocument.startViewTransition(update)
-      } else update()
+      const nextRoute = (window.location.hash || '#/').replace(/^#/, '')
+      const currentRoute = displayedRoute.current
+      const staysOnHome = (currentRoute === '/' || currentRoute.startsWith('/#')) && (nextRoute === '/' || nextRoute.startsWith('/#'))
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+      window.clearTimeout(exitTimer.current)
+      window.clearTimeout(enterTimer.current)
+      if (nextRoute === currentRoute || staysOnHome || reducedMotion) {
+        displayedRoute.current = nextRoute
+        setRoute(nextRoute)
+        setPhase('idle')
+        return
+      }
+      setPhase('exiting')
+      exitTimer.current = window.setTimeout(() => {
+        displayedRoute.current = nextRoute
+        setRoute(nextRoute)
+        setPhase('entering')
+        enterTimer.current = window.setTimeout(() => setPhase('idle'), 520)
+      }, 190)
     }
     window.addEventListener('hashchange', listener)
-    return () => window.removeEventListener('hashchange', listener)
+    return () => {
+      window.removeEventListener('hashchange', listener)
+      window.clearTimeout(exitTimer.current)
+      window.clearTimeout(enterTimer.current)
+    }
   }, [])
-  return hash.replace(/^#/, '')
+  return { route, phase }
 }
 
 function usePreferences() {
@@ -144,28 +166,41 @@ function usePreferences() {
 
 function useScrollReveal(route: string) {
   useLayoutEffect(() => {
-    const elements = [...document.querySelectorAll<HTMLElement>('.section-title, .proof-band, .about-grid, .filter-panel, .project-card, .timeline article, .case-study-grid article, .performance-panel, .education-grid article, .skills-grid article, .contact-section > *, .resume-grid article, .resume-note, .detail-content section, .detail-aside')]
-    elements.forEach((element, index) => {
-      element.classList.add('reveal-target')
-      element.style.setProperty('--reveal-order', String(index % 6))
-    })
-
-    if (typeof IntersectionObserver === 'undefined') {
-      elements.forEach((element) => element.classList.add('is-visible'))
-      return
-    }
-
+    const selector = '.section-title, .proof-band, .about-grid, .filter-panel, .project-card, .timeline article, .case-study-grid article, .performance-panel, .education-grid article, .skills-grid article, .contact-copy, .contact-links, .resume-grid article, .resume-note, .detail-content section, .detail-aside'
     document.documentElement.classList.add('motion-ready')
-    const observer = new IntersectionObserver((entries) => {
+    const observer = typeof IntersectionObserver === 'undefined' ? null : new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         if (!entry.isIntersecting) return
         entry.target.classList.add('is-visible')
-        observer.unobserve(entry.target)
+        observer?.unobserve(entry.target)
       })
-    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' })
-    elements.forEach((element) => observer.observe(element))
+    }, { threshold: 0.18, rootMargin: '0px 0px -14% 0px' })
+    const motionType = (element: HTMLElement) => {
+      if (element.matches('.section-title')) return 'title'
+      if (element.matches('.project-card')) return 'card'
+      if (element.matches('.timeline article')) return 'timeline'
+      if (element.matches('.skills-grid article')) return 'skill'
+      if (element.matches('.performance-panel')) return 'metrics'
+      if (element.matches('.contact-copy')) return 'contact-copy'
+      if (element.matches('.contact-links')) return 'contact-links'
+      if (element.matches('.detail-content section, .detail-aside')) return 'detail'
+      return 'panel'
+    }
+    const parentOrder = new WeakMap<Element, number>()
+    const register = (element: HTMLElement) => {
+      if (element.classList.contains('reveal-target')) return
+      const parent = element.parentElement ?? document.body
+      const order = parentOrder.get(parent) ?? 0
+      parentOrder.set(parent, order + 1)
+      element.classList.add('reveal-target')
+      element.dataset.motion = motionType(element)
+      element.style.setProperty('--reveal-order', String(order % 6))
+      if (observer) observer.observe(element)
+      else element.classList.add('is-visible')
+    }
+    document.querySelectorAll<HTMLElement>(selector).forEach(register)
     return () => {
-      observer.disconnect()
+      observer?.disconnect()
       document.documentElement.classList.remove('motion-ready')
     }
   }, [route])
@@ -177,6 +212,7 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
   const [activeSection, setActiveSection] = useState('')
   const headerRef = useRef<HTMLElement>(null)
   const navRef = useRef<HTMLElement>(null)
+  const navItemsRef = useRef<HTMLDivElement>(null)
   const t = copy[language]
   const items = [
     ['#/', t.nav.home], ['#/projects', t.nav.projects], ['#/#experience', t.nav.experience], ['#/#skills', t.nav.skills], ['#/resume', t.nav.resume], ['#/#contact', t.nav.contact],
@@ -191,7 +227,10 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
       else window.location.hash = href.slice(1)
     } else window.location.hash = href.slice(1)
   }
-  useEffect(() => setOpen(false), [route])
+  useEffect(() => {
+    setOpen(false)
+    setActiveSection(route.startsWith('/#') ? route.slice(2) : '')
+  }, [route])
   useEffect(() => {
     const updateHeader = () => setScrolled(window.scrollY > 24)
     updateHeader()
@@ -233,12 +272,36 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
   }, [open])
   const isHomeRoute = route === '/' || route.startsWith('/#')
   const isActive = (href: string) => href === '#/' ? route === '/' && !activeSection : href.includes('/#') ? isHomeRoute && activeSection === href.split('#')[2] : href === '#/projects' ? route.startsWith('/projects') : href === '#/resume' ? route === '/resume' : false
+  useLayoutEffect(() => {
+    const navItems = navItemsRef.current
+    if (!navItems) return
+    const updateIndicator = () => {
+      const active = navItems.querySelector<HTMLElement>('button.active')
+      navItems.dataset.hasActive = active ? 'true' : 'false'
+      if (!active) return
+      const parentRect = navItems.getBoundingClientRect()
+      const activeRect = active.getBoundingClientRect()
+      navItems.style.setProperty('--nav-indicator-x', `${activeRect.left - parentRect.left}px`)
+      navItems.style.setProperty('--nav-indicator-y', `${activeRect.top - parentRect.top}px`)
+      navItems.style.setProperty('--nav-indicator-width', `${activeRect.width}px`)
+      navItems.style.setProperty('--nav-indicator-height', `${activeRect.height}px`)
+    }
+    const frame = window.requestAnimationFrame(updateIndicator)
+    const resizeObserver = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(updateIndicator)
+    resizeObserver?.observe(navItems)
+    window.addEventListener('resize', updateIndicator)
+    return () => {
+      window.cancelAnimationFrame(frame)
+      resizeObserver?.disconnect()
+      window.removeEventListener('resize', updateIndicator)
+    }
+  }, [activeSection, language, open, route])
   return <>
     <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef}>
       <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
       <nav id="primary-navigation" ref={navRef} className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
         <div className="nav-panel-heading" aria-hidden="true"><span>{language === 'en' ? 'Navigation' : 'Navegación'}</span><small>Portfolio / 2026</small></div>
-        <div className="nav-items">{items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}</div>
+        <div className="nav-items" ref={navItemsRef}><span className="nav-indicator" aria-hidden="true"/>{items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}</div>
       </nav>
       <div className="header-actions">
         <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
@@ -337,6 +400,7 @@ export function ProjectExplorer({ language }: { language: Language }) {
     const haystack = `${project.name} ${project.overview.en} ${project.overview.es} ${project.technologies.join(' ')}`.toLowerCase()
     return (!search || haystack.includes(search.toLowerCase())) && (!category || project.categories.includes(category)) && (!projectLanguage || project.languages.includes(projectLanguage)) && (!technology || project.technologies.includes(technology)) && (!kind || project.kind === kind) && (!status || project.status === status)
   }), [search, category, projectLanguage, technology, kind, status])
+  const hasFilters = Boolean(search || category || projectLanguage || technology || kind || status)
   const reset = () => { setSearch(''); setCategory(''); setProjectLanguage(''); setTechnology(''); setKind(''); setStatus('') }
   return <>
     <section className="filter-panel" aria-labelledby="filters-title">
@@ -354,7 +418,7 @@ export function ProjectExplorer({ language }: { language: Language }) {
       </div>
     </section>
     <div className="results-summary" aria-live="polite"><b>{filtered.length}</b> {language === 'en' ? 'projects shown' : 'proyectos mostrados'}</div>
-    {filtered.length ? <div className="project-grid">{filtered.map((project) => <ProjectCard key={project.slug} project={project} language={language}/>)}</div> : <div className="empty-state"><Search/><h3>{t.noResults}</h3><button className="button secondary" onClick={reset}>{t.clear}</button></div>}
+    {filtered.length ? <div className="project-grid" data-filtered={hasFilters ? 'true' : undefined} key={filtered.map((project) => project.slug).join('|')}>{filtered.map((project) => <ProjectCard key={project.slug} project={project} language={language}/>)}</div> : <div className="empty-state"><Search/><h3>{t.noResults}</h3><button className="button secondary" onClick={reset}>{t.clear}</button></div>}
   </>
 }
 
@@ -371,7 +435,7 @@ function HomePage({ language }: { language: Language }) {
   const featured = projects.filter((project) => project.featured).slice(0, 4)
   return <main id="main-content">
     <section className="hero section-frame">
-      <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><p className="hero-role">{t.heroRole}</p><h1>{t.heroTitleA}<br/><em>{t.heroTitleB}</em></h1><p className="hero-lead">{t.heroBody}</p>
+      <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><p className="hero-role">{t.heroRole}</p><h1><span className="hero-title-line">{t.heroTitleA}</span><span className="hero-title-line hero-title-accent">{t.heroTitleB}</span></h1><p className="hero-lead">{t.heroBody}</p>
         <div className="hero-domain-row" aria-label={language === 'en' ? 'Engineering focus areas' : 'Áreas de enfoque de ingeniería'}>{['ML systems', 'Infrastructure', 'Data integration', 'Full-stack'].map((area) => <span key={area}>{area}</span>)}</div>
         <div className="hero-actions"><a className="button primary" href="#/projects">{t.viewProjects}<ArrowRight size={17}/></a><a className="button secondary" href="#/resume">{t.resume}</a></div>
         <p className="availability"><Globe2 size={16}/>{t.availability}</p></div>
@@ -421,7 +485,7 @@ function Contact({ language }: { language: Language }) {
       window.setTimeout(() => setCopied(false), 1800)
     } catch { setCopied(false) }
   }
-  return <section id="contact" className="contact-section"><div className="contact-copy"><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p><button className="copy-email" onClick={copyEmail} type="button">{copied ? <Check size={16}/> : <Copy size={16}/>}<span aria-live="polite">{copied ? (language === 'en' ? 'Email copied' : 'Correo copiado') : (language === 'en' ? 'Copy email' : 'Copiar correo')}</span></button></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/><span><small>{language === 'en' ? 'Email' : 'Correo'}</small>sebastroza10@gmail.com</span><ArrowRight size={17}/></a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/><span><small>LinkedIn</small>LinkedIn — Sebastián Astroza</span><ExternalLink size={15}/></a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/><span><small>GitHub</small>github.com/sebastroza1</span><ExternalLink size={15}/></a><a href="https://sebastroza1.github.io/" target="_blank" rel="noreferrer"><Globe2/><span><small>{language === 'en' ? 'Portfolio' : 'Portafolio'}</small>sebastroza1.github.io</span><ExternalLink size={15}/></a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/><span><small>{language === 'en' ? 'English credential' : 'Certificación de inglés'}</small>EF SET · Global C1</span><ExternalLink size={15}/></a></div></section>
+  return <section id="contact" className="contact-section"><div className="contact-copy"><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p><button className={`copy-email${copied ? ' copied' : ''}`} onClick={copyEmail} type="button">{copied ? <Check size={16}/> : <Copy size={16}/>}<span aria-live="polite">{copied ? (language === 'en' ? 'Email copied' : 'Correo copiado') : (language === 'en' ? 'Copy email' : 'Copiar correo')}</span></button></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/><span><small>{language === 'en' ? 'Email' : 'Correo'}</small>sebastroza10@gmail.com</span><ArrowRight size={17}/></a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/><span><small>LinkedIn</small>LinkedIn — Sebastián Astroza</span><ExternalLink size={15}/></a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/><span><small>GitHub</small>github.com/sebastroza1</span><ExternalLink size={15}/></a><a href="https://sebastroza1.github.io/" target="_blank" rel="noreferrer"><Globe2/><span><small>{language === 'en' ? 'Portfolio' : 'Portafolio'}</small>sebastroza1.github.io</span><ExternalLink size={15}/></a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/><span><small>{language === 'en' ? 'English credential' : 'Certificación de inglés'}</small>EF SET · Global C1</span><ExternalLink size={15}/></a></div></section>
 }
 
 function BackToTop({ language }: { language: Language }) {
@@ -440,7 +504,7 @@ function Footer({ language }: { language: Language }) {
 }
 
 export default function App() {
-  const route = useRoute()
+  const { route, phase } = useRoute()
   const { language, setLanguage, theme, setTheme } = usePreferences()
   useScrollReveal(route)
   useEffect(() => {
@@ -494,5 +558,5 @@ export default function App() {
   }, [route])
   const detail = route.startsWith('/projects/') ? projects.find((project) => project.slug === route.split('/')[2]) : undefined
   const routeKey = route.startsWith('/#') ? '/' : route
-  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} route={route}/><div className="route-shell" key={routeKey}>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}</div><Footer language={language}/><BackToTop language={language}/></>
+  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} route={route}/><div className={`route-shell route-${phase}`} key={routeKey}>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}</div><Footer language={language}/><BackToTop language={language}/></>
 }

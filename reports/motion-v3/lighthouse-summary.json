@@ -1,0 +1,29 @@
+{
+  "generatedAt": "2026-10-30",
+  "tool": "Lighthouse 12.8.2",
+  "profile": "default mobile",
+  "runsPerVariant": 5,
+  "baselineCommit": "70995e2760b6ce406ed9eb27044a38a773e2b96b",
+  "before": {
+    "runs": {
+      "performance": [96, 98, 96, 97, 98],
+      "fcpMs": [1412, 1404, 1358, 1398, 1401],
+      "lcpMs": [2172, 2159, 2112, 2151, 2154],
+      "tbtMs": [182, 113, 193, 160, 102],
+      "speedIndexMs": [2109, 1893, 2023, 1876, 1813]
+    },
+    "median": { "performance": 97, "accessibility": 100, "bestPractices": 100, "seo": 100, "fcpMs": 1401, "lcpMs": 2154, "tbtMs": 160, "cls": 0.0087, "speedIndexMs": 1893, "transferBytes": 210927 }
+  },
+  "after": {
+    "runs": {
+      "performance": [97, 92, 98, 97, 97],
+      "fcpMs": [1372, 1408, 1357, 1357, 1399],
+      "lcpMs": [1983, 2163, 1960, 1960, 2003],
+      "tbtMs": [144, 291, 148, 166, 161],
+      "speedIndexMs": [1491, 1544, 1357, 1484, 1470]
+    },
+    "median": { "performance": 97, "accessibility": 100, "bestPractices": 100, "seo": 100, "fcpMs": 1372, "lcpMs": 1983, "tbtMs": 161, "cls": 0.0087, "speedIndexMs": 1484, "transferBytes": 212439 }
+  },
+  "delta": { "performance": 0, "accessibility": 0, "bestPractices": 0, "seo": 0, "fcpMs": -29, "lcpMs": -171, "tbtMs": 1, "cls": 0, "speedIndexMs": -409, "transferBytes": 1512 },
+  "boundary": "Local synthetic laboratory evidence only; not production real-user monitoring."
+}
