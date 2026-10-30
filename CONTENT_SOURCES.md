@@ -1,6 +1,6 @@
 # Content Sources
 
-Audit date: 2026-10-29.
+Audit date: 2026-10-30.
 
 ## Source hierarchy
 
@@ -25,7 +25,7 @@ When a higher-confidence source was unavailable, the site avoids a metric or use
 | NeuroFAST research scope and UDD 2026 first-stage selection | Owner-provided portfolio brief | Academic prototype; no win, diagnosis, device or clinical-validation claim |
 | Spanish, English, French and Portuguese levels | Owner-provided portfolio brief | English links to the provided EF SET certificate URL; no additional certificate files are hosted |
 | EF SET Global C1 and LFS158 Introduction to Kubernetes, October 2026 | Owner-provided portfolio brief; public EF SET credential URL supplied | EF SET links to the public credential; LFS158 is described as course completion, not production Kubernetes experience |
-| Professional portrait | Owner-provided photograph on 2026-10-29 | Processed locally for background isolation and WebP delivery; no external editing service used and no facial features were generated |
+| Professional portrait | Owner-provided photograph on 2026-10-29 | AI-assisted background extraction with explicit identity-preservation constraints, followed by local transparent WebP optimization and visual edge inspection; no claim of pixel-identical processing |
 | Resume structure and presentation | [Harvard FAS Mignone Center resume guidance](https://careerservices.fas.harvard.edu/resources/create-a-strong-resume/) reviewed 2026-10-29 | Concise, fact-based, easy-to-scan, reverse-chronological, consistent and photo-free single-column documents; “Harvard-style” is a design convention, not an institutional endorsement |
 
 ## Repository-derived claims

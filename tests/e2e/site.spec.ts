@@ -7,7 +7,7 @@ test.beforeEach(async ({ page }) => {
 })
 
 test('home presents evidence and keyboard navigation', async ({ page }) => {
-  await expect(page.getByRole('heading', { name: /Building reliable software/i })).toBeVisible()
+  await expect(page.getByRole('heading', { name: /I build reliable systems/i })).toBeVisible()
   await expect(page.getByText('Engineering evidence, not decorative claims.')).toBeVisible()
   await page.keyboard.press('Tab')
   await expect(page.getByRole('link', { name: 'Skip to content' })).toBeFocused()
@@ -74,6 +74,15 @@ test('portrait and direct contact links are visible and correctly targeted', asy
   await expect(page.getByRole('link', { name: /github.com\/sebastroza1/i })).toHaveAttribute('href', 'https://github.com/sebastroza1')
 })
 
+test('contact email can be copied without hiding the written address', async ({ page, context }) => {
+  await context.grantPermissions(['clipboard-read', 'clipboard-write'], { origin: 'http://127.0.0.1:4173' })
+  await page.getByRole('button', { name: 'Copy email' }).scrollIntoViewIfNeeded()
+  await page.getByRole('button', { name: 'Copy email' }).click()
+  await expect(page.getByText('Email copied')).toBeVisible()
+  expect(await page.evaluate(() => navigator.clipboard.readText())).toBe('sebastroza10@gmail.com')
+  await expect(page.getByRole('link', { name: /sebastroza10@gmail.com/i })).toBeVisible()
+})
+
 test('every published project card resolves to one unique detail route', async ({ page }) => {
   await page.goto('/#/projects')
   const links = await page.locator('a[href^="#/projects/"]').evaluateAll((elements) =>
@@ -97,6 +106,38 @@ test('responsive routes do not create horizontal overflow', async ({ page }) => 
   }
 })
 
+test('required responsive matrix keeps the hero usable at every width', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'single cross-viewport audit')
+  const viewports = [
+    [320, 720], [360, 800], [375, 812], [390, 844], [414, 896], [430, 932],
+    [600, 900], [768, 1024], [820, 1180], [1024, 900], [1280, 900], [1440, 1000], [1920, 1080],
+    [844, 390], [932, 430],
+  ]
+  for (const [width, height] of viewports) {
+    await page.setViewportSize({ width, height })
+    await page.goto('/')
+    await expect(page.getByRole('heading', { name: /I build reliable systems/i })).toBeVisible()
+    expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+    const cta = await page.getByRole('link', { name: 'View projects' }).boundingBox()
+    const portrait = await page.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' }).boundingBox()
+    expect(cta).not.toBeNull()
+    expect(cta!.height).toBeGreaterThanOrEqual(44)
+    expect(portrait).not.toBeNull()
+    expect(portrait!.width).toBeLessThanOrEqual(width)
+  }
+})
+
+test('increased text size preserves navigation and avoids horizontal scrolling', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'single large-text audit')
+  await page.setViewportSize({ width: 1024, height: 900 })
+  await page.goto('/')
+  await page.addStyleTag({ content: 'html { font-size: 125% !important; }' })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+  await expect(page.getByRole('link', { name: 'View projects' })).toBeVisible()
+  await page.getByRole('button', { name: 'Open navigation' }).click()
+  await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible()
+})
+
 test('scroll reveal and route transitions activate without blocking content', async ({ page }) => {
   const proofBand = page.locator('.proof-band')
   await expect(proofBand).toHaveClass(/reveal-target/)
@@ -108,9 +149,55 @@ test('scroll reveal and route transitions activate without blocking content', as
   await expect(page.locator('.nav-links button').filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page')
 })
 
+test('direct section routes and browser history preserve navigation context', async ({ page }, testInfo) => {
+  await page.goto('/#/#skills')
+  await expect(page.getByRole('heading', { name: 'Engineering skills' })).toBeInViewport()
+  await expect(page.locator('.nav-links button').filter({ hasText: 'Skills' })).toHaveAttribute('aria-current', 'page')
+  if (testInfo.project.name.includes('mobile')) await page.getByRole('button', { name: 'Open navigation' }).click()
+  await page.getByRole('button', { name: 'Experience' }).click()
+  await expect(page.getByRole('heading', { name: 'Professional experience' })).toBeInViewport()
+  await page.goBack()
+  await expect(page.getByRole('heading', { name: 'Engineering skills' })).toBeInViewport()
+})
+
+test('reduced motion keeps revealed content visible and navigation usable', async ({ page }) => {
+  await page.emulateMedia({ reducedMotion: 'reduce' })
+  await page.reload()
+  const proofBand = page.locator('.proof-band')
+  await expect(proofBand).toBeVisible()
+  await expect(proofBand).toHaveCSS('opacity', '1')
+  await page.getByRole('link', { name: 'View projects' }).click()
+  await expect(page.getByRole('heading', { name: 'Projects built to be inspected.' })).toBeVisible()
+})
+
+test('project cards use a real single-column mobile composition', async ({ page }, testInfo) => {
+  await page.goto('/#/projects')
+  const cards = page.locator('.project-card')
+  const first = await cards.nth(0).boundingBox()
+  const second = await cards.nth(1).boundingBox()
+  expect(first).not.toBeNull()
+  expect(second).not.toBeNull()
+  if (testInfo.project.name.includes('mobile')) {
+    expect(Math.abs(first!.x - second!.x)).toBeLessThan(2)
+    expect(second!.y).toBeGreaterThan(first!.y + first!.height)
+  } else expect(second!.x).toBeGreaterThan(first!.x)
+})
+
 test('mobile menu opens and reaches projects', async ({ page }, testInfo) => {
   test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only interaction')
-  await page.getByRole('button', { name: 'Toggle menu' }).click()
+  await page.getByRole('button', { name: 'Open navigation' }).click()
   await page.getByRole('button', { name: 'Projects' }).click()
   await expect(page.getByRole('heading', { name: 'Projects built to be inspected.' })).toBeVisible()
+})
+
+test('mobile menu traps focus, closes with Escape and restores scrolling', async ({ page }, testInfo) => {
+  test.skip(!testInfo.project.name.includes('mobile'), 'mobile-only interaction')
+  const menuButton = page.getByRole('button', { name: 'Open navigation' })
+  await menuButton.click()
+  await expect(page.getByRole('button', { name: 'Home' })).toBeFocused()
+  await expect(page.locator('body')).toHaveClass(/nav-open/)
+  await page.keyboard.press('Escape')
+  await expect(page.getByRole('button', { name: 'Home' })).not.toBeVisible()
+  await expect(page.locator('body')).not.toHaveClass(/nav-open/)
+  await expect(menuButton).toBeFocused()
 })

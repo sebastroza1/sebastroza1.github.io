@@ -1,19 +1,20 @@
-import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, type ReactNode } from 'react'
 import {
-  AlertTriangle, ArrowLeft, ArrowRight, Bot, Braces, CheckCircle2, ChevronRight, CircleDot,
+  AlertTriangle, ArrowLeft, ArrowRight, ArrowUp, Bot, Braces, Check, CheckCircle2, ChevronRight, CircleDot, Copy,
   Database, Download, ExternalLink, Github, Globe2, Languages,
   Gauge, Linkedin, Mail, Menu, Moon, Network, Search, Server, ShieldCheck, Sun, TestTube2, X,
 } from 'lucide-react'
 import { allLanguages, allTechnologies, categoryLabels, projects, type Category, type Language, type Project } from './data/projects'
 
 type Theme = 'light' | 'dark'
+type TransitionDocument = Document & { startViewTransition?: (update: () => void) => { finished: Promise<void> } }
 
 const copy = {
   en: {
     nav: { home: 'Home', projects: 'Projects', experience: 'Experience', skills: 'Skills', resume: 'Resume', contact: 'Contact' },
-    heroKicker: 'Software · Systems · Applied AI',
-    heroTitleA: 'Building reliable software', heroTitleB: 'and applied AI.',
-    heroBody: 'Software engineer combining professional full-stack, Linux, QA and data-integration experience with inspectable projects in applied AI and systems engineering.',
+    heroKicker: 'Sebastián Andrés Astroza Aguayo', heroRole: 'Software Engineer · Santiago, Chile',
+    heroTitleA: 'I build reliable systems—', heroTitleB: 'then prove they work.',
+    heroBody: 'Full-stack, Linux, data and applied-AI engineering backed by inspectable code, tests and explicit evidence boundaries.',
     viewProjects: 'View projects', resume: 'Resume', availability: 'Santiago, Chile · Open to international opportunities and relocation',
     proofTitle: 'Engineering evidence, not decorative claims.',
     proofBody: 'Every public project is tied to source code, tests, documented results and explicit limitations. Synthetic data and unverified runtime paths remain labelled as such.',
@@ -32,9 +33,9 @@ const copy = {
   },
   es: {
     nav: { home: 'Inicio', projects: 'Proyectos', experience: 'Experiencia', skills: 'Competencias', resume: 'CV', contact: 'Contacto' },
-    heroKicker: 'Software · Sistemas · IA aplicada',
-    heroTitleA: 'Construyendo software confiable', heroTitleB: 'e IA aplicada.',
-    heroBody: 'Ingeniero de software que combina experiencia profesional en full-stack, Linux, QA e integración de datos con proyectos inspeccionables en IA aplicada e ingeniería de sistemas.',
+    heroKicker: 'Sebastián Andrés Astroza Aguayo', heroRole: 'Ingeniero de Software · Santiago, Chile',
+    heroTitleA: 'Construyo sistemas confiables', heroTitleB: 'y demuestro que funcionan.',
+    heroBody: 'Ingeniería full-stack, Linux, datos e IA aplicada respaldada por código inspeccionable, pruebas y límites explícitos de evidencia.',
     viewProjects: 'Ver proyectos', resume: 'Currículum', availability: 'Santiago, Chile · Disponible para oportunidades internacionales y reubicación',
     proofTitle: 'Evidencia de ingeniería, no afirmaciones decorativas.',
     proofBody: 'Cada proyecto público se vincula con código, pruebas, resultados documentados y limitaciones explícitas. Los datos sintéticos y rutas no verificadas permanecen identificados.',
@@ -92,13 +93,13 @@ const performanceMetrics = [
 ]
 
 const skills = [
-  { icon: Braces, title: { en: 'Software Engineering & Full-Stack', es: 'Ingeniería de software y full-stack' }, scope: { en: 'Professional + independent evidence', es: 'Evidencia profesional + independiente' }, items: ['PHP', 'Laravel', 'JavaScript/TypeScript', 'Angular', 'Next.js', 'Vue 3', 'FastAPI', 'REST APIs', 'Flutter'], links: ['ml-model-serving-ops', 'landfinder-chile'] },
-  { icon: Server, title: { en: 'Infrastructure & DevOps', es: 'Infraestructura y DevOps' }, scope: { en: 'Professional practice + labs', es: 'Práctica profesional + laboratorios' }, items: ['Linux', 'Nginx', 'PHP-FPM', 'Docker', 'GitHub Actions', 'CI/CD', 'Bash', 'PowerShell', 'Networking', 'Observability', 'Kubernetes training'], links: ['rhel-network-operations-lab', 'storage-performance-observability'] },
+  { icon: Braces, title: { en: 'Full-Stack Engineering', es: 'Ingeniería full-stack' }, scope: { en: 'Professional + independent evidence', es: 'Evidencia profesional + independiente' }, items: ['TypeScript', 'Angular', 'React', 'Next.js', 'Vue 3', 'PHP', 'Laravel', 'Flutter'], links: ['engineering-portfolio-delivery', 'landfinder-chile'] },
+  { icon: Network, title: { en: 'Backend & APIs', es: 'Backend y APIs' }, scope: { en: 'Professional + project evidence', es: 'Evidencia profesional + proyectos' }, items: ['Laravel', 'FastAPI', 'REST APIs', 'Webhooks', 'Pydantic', 'SQLAlchemy', 'Authentication', 'Integrations'], links: ['ml-model-serving-ops', 'landfinder-chile'] },
+  { icon: Server, title: { en: 'Infrastructure & DevOps', es: 'Infraestructura y DevOps' }, scope: { en: 'Professional practice + labs', es: 'Práctica profesional + laboratorios' }, items: ['Linux', 'Nginx', 'PHP-FPM', 'Docker', 'GitHub Actions', 'CI/CD', 'Bash', 'Networking', 'Observability'], links: ['rhel-network-operations-lab', 'storage-performance-observability'] },
   { icon: Database, title: { en: 'Databases & Data Engineering', es: 'Bases de datos e ingeniería de datos' }, scope: { en: 'Professional + project evidence', es: 'Evidencia profesional + proyectos' }, items: ['PostgreSQL/PostGIS', 'MySQL', 'SQL', 'Firebase/Firestore', 'ETL', 'Geospatial data', 'Pandas', 'NumPy'], links: ['dataset-quality-calibration-lab', 'landfinder-chile'] },
-  { icon: TestTube2, title: { en: 'Quality, Security & Automation', es: 'Calidad, seguridad y automatización' }, scope: { en: 'Professional + reproducible labs', es: 'Profesional + laboratorios reproducibles' }, items: ['pytest', 'Selenium', 'Postman', 'Playwright', 'n8n', 'Web performance', 'Dry-run safety', 'Least privilege'], links: ['web-performance-evidence', 'collaboration-ops-lab'] },
-  { icon: CircleDot, title: { en: 'AI & Machine Learning', es: 'IA y machine learning' }, scope: { en: 'Independent + academic evidence', es: 'Evidencia independiente + académica' }, items: ['Python', 'PyTorch', 'TensorFlow/Keras', 'scikit-learn', 'MLflow', 'OpenCV', 'Model evaluation', 'Synthetic data'], links: ['mlops-gpu-benchmark-lab', 'scientific-anomaly-detection'] },
-  { icon: Network, title: { en: 'Systems, Research & Prototyping', es: 'Sistemas, investigación y prototipado' }, scope: { en: 'Academic + independent evidence', es: 'Evidencia académica + independiente' }, items: ['C++17/20', 'CMake', 'Unity', 'C#', 'AR Foundation', 'Arduino', 'Scientific evaluation'], links: ['cpp-file-integrity-toolkit', 'neurofast'] },
-  { icon: ShieldCheck, title: { en: 'Collaboration Platforms', es: 'Plataformas de colaboración' }, scope: { en: 'Microsoft 365 exposure; Graph/Entra lab only', es: 'Exposición a Microsoft 365; Graph/Entra solo en laboratorio' }, items: ['Microsoft 365', 'Graph concepts', 'Entra concepts', 'Identity reconciliation', 'Audit trails', 'Idempotent planning'], links: ['collaboration-ops-lab'] },
+  { icon: ShieldCheck, title: { en: 'Security, QA & Automation', es: 'Seguridad, QA y automatización' }, scope: { en: 'Professional + reproducible labs', es: 'Profesional + laboratorios reproducibles' }, items: ['Playwright', 'pytest', 'Selenium', 'Postman', 'n8n', 'Dry-run safety', 'Least privilege', 'Audit trails'], links: ['web-performance-evidence', 'collaboration-ops-lab'] },
+  { icon: CircleDot, title: { en: 'Machine Learning & Computer Vision', es: 'Machine learning y visión computacional' }, scope: { en: 'Independent + academic evidence', es: 'Evidencia independiente + académica' }, items: ['Python', 'PyTorch', 'TensorFlow/Keras', 'scikit-learn', 'MLflow', 'OpenCV', 'Model evaluation', 'Synthetic data'], links: ['mlops-gpu-benchmark-lab', 'scientific-anomaly-detection'] },
+  { icon: TestTube2, title: { en: 'Systems Engineering', es: 'Ingeniería de sistemas' }, scope: { en: 'Academic + independent evidence', es: 'Evidencia académica + independiente' }, items: ['C++17/20', 'CMake', 'Distributed storage', 'Networking', 'Unity', 'AR Foundation', 'Arduino', 'Scientific evaluation'], links: ['cpp-file-integrity-toolkit', 'storage-performance-observability'] },
 ]
 
 const resumes = {
@@ -115,7 +116,14 @@ const resumes = {
 function useRoute() {
   const [hash, setHash] = useState(window.location.hash || '#/')
   useEffect(() => {
-    const listener = () => setHash(window.location.hash || '#/')
+    const listener = () => {
+      const update = () => setHash(window.location.hash || '#/')
+      const transitionDocument = document as TransitionDocument
+      const isSectionNavigation = window.location.hash.startsWith('#/#')
+      if (!isSectionNavigation && !window.matchMedia('(prefers-reduced-motion: reduce)').matches && transitionDocument.startViewTransition) {
+        transitionDocument.startViewTransition(update)
+      } else update()
+    }
     window.addEventListener('hashchange', listener)
     return () => window.removeEventListener('hashchange', listener)
   }, [])
@@ -136,10 +144,10 @@ function usePreferences() {
 
 function useScrollReveal(route: string) {
   useLayoutEffect(() => {
-    const elements = [...document.querySelectorAll<HTMLElement>('.content-section, .proof-band, .filter-panel, .page-main > .project-grid .project-card, .contact-section, .resume-grid article, .detail-content section, .detail-aside')]
+    const elements = [...document.querySelectorAll<HTMLElement>('.section-title, .proof-band, .about-grid, .filter-panel, .project-card, .timeline article, .case-study-grid article, .performance-panel, .education-grid article, .skills-grid article, .contact-section > *, .resume-grid article, .resume-note, .detail-content section, .detail-aside')]
     elements.forEach((element, index) => {
       element.classList.add('reveal-target')
-      element.style.setProperty('--reveal-order', String(index % 5))
+      element.style.setProperty('--reveal-order', String(index % 6))
     })
 
     if (typeof IntersectionObserver === 'undefined') {
@@ -165,6 +173,9 @@ function useScrollReveal(route: string) {
 
 function Header({ language, setLanguage, theme, setTheme, route }: { language: Language; setLanguage: (value: Language) => void; theme: Theme; setTheme: (value: Theme) => void; route: string }) {
   const [open, setOpen] = useState(false)
+  const [activeSection, setActiveSection] = useState('')
+  const headerRef = useRef<HTMLElement>(null)
+  const navRef = useRef<HTMLElement>(null)
   const t = copy[language]
   const items = [
     ['#/', t.nav.home], ['#/projects', t.nav.projects], ['#/#experience', t.nav.experience], ['#/#skills', t.nav.skills], ['#/resume', t.nav.resume], ['#/#contact', t.nav.contact],
@@ -173,22 +184,56 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
     setOpen(false)
     if (href.includes('/#')) {
       const id = href.split('#')[2]
-      window.location.hash = '#/'
-      window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 30)
+      setActiveSection(id)
+      window.location.hash = href.slice(1)
     } else window.location.hash = href.slice(1)
   }
   useEffect(() => setOpen(false), [route])
-  const isActive = (href: string) => href === '#/' ? route === '/' : href === '#/projects' ? route.startsWith('/projects') : href === '#/resume' ? route === '/resume' : false
-  return <header className="site-header">
+  useEffect(() => {
+    if (!(route === '/' || route.startsWith('/#')) || typeof IntersectionObserver === 'undefined') return
+    const sections = ['experience', 'skills', 'contact'].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
+    const observer = new IntersectionObserver((entries) => {
+      const visible = entries.filter((entry) => entry.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0]
+      if (visible) setActiveSection(visible.target.id)
+      else if (window.scrollY < 240) setActiveSection('')
+    }, { rootMargin: '-20% 0px -62% 0px', threshold: [0, .15, .5] })
+    sections.forEach((section) => observer.observe(section))
+    return () => observer.disconnect()
+  }, [route])
+  useEffect(() => {
+    if (!open) return
+    const previousFocus = document.activeElement as HTMLElement | null
+    document.body.classList.add('nav-open')
+    window.requestAnimationFrame(() => navRef.current?.querySelector<HTMLButtonElement>('button')?.focus())
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') { setOpen(false); return }
+      if (event.key !== 'Tab' || !headerRef.current) return
+      const focusable = [...headerRef.current.querySelectorAll<HTMLElement>('button:not([disabled]), a[href]')].filter((element) => element.offsetParent !== null)
+      const first = focusable[0]
+      const last = focusable.at(-1)
+      if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last?.focus() }
+      else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus() }
+    }
+    document.addEventListener('keydown', handleKeyDown)
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+      document.body.classList.remove('nav-open')
+      previousFocus?.focus()
+    }
+  }, [open])
+  const isHomeRoute = route === '/' || route.startsWith('/#')
+  const isActive = (href: string) => href === '#/' ? route === '/' && !activeSection : href.includes('/#') ? isHomeRoute && activeSection === href.split('#')[2] : href === '#/projects' ? route.startsWith('/projects') : href === '#/resume' ? route === '/resume' : false
+  return <header className="site-header" ref={headerRef}>
     <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
-    <nav className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
+    <nav id="primary-navigation" ref={navRef} className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
       {items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}
     </nav>
     <div className="header-actions">
       <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
       <button className="icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
-      <button className="icon-button menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-label="Toggle menu">{open ? <X/> : <Menu/>}</button>
+      <button className="icon-button menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? (language === 'en' ? 'Close navigation' : 'Cerrar navegación') : (language === 'en' ? 'Open navigation' : 'Abrir navegación')}>{open ? <X/> : <Menu/>}</button>
     </div>
+    <button className={open ? 'nav-scrim open' : 'nav-scrim'} aria-label={language === 'en' ? 'Close navigation' : 'Cerrar navegación'} onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}/>
   </header>
 }
 
@@ -197,16 +242,21 @@ function HeroPortrait({ language }: { language: Language }) {
   return <figure className="hero-portrait" aria-labelledby="portrait-caption">
     <div className={`portrait-frame ${loaded ? 'image-loaded' : ''}`}>
       <div className="portrait-status"><span>PROFILE / 2026</span><span className="trace-state">AVAILABLE</span></div>
+      <div className="portrait-grid" aria-hidden="true"/>
       <span className="portrait-loader" aria-hidden="true"/>
-      <img
-        src="/assets/sebastian-astroza-portrait-v2.webp"
-        alt={language === 'en' ? 'Portrait of Sebastián Astroza wearing a blue shirt' : 'Retrato de Sebastián Astroza con camisa azul'}
-        width="1102"
-        height="1427"
-        fetchPriority="high"
-        decoding="async"
-        onLoad={() => setLoaded(true)}
-      />
+      <picture>
+        <source media="(max-width: 760px)" srcSet="/assets/sebastian-astroza-portrait-mobile.webp"/>
+        <img
+          src="/assets/sebastian-astroza-portrait-v2.webp"
+          alt={language === 'en' ? 'Portrait of Sebastián Astroza wearing a blue shirt' : 'Retrato de Sebastián Astroza con camisa azul'}
+          width="1102"
+          height="1427"
+          sizes="(max-width: 760px) calc(100vw - 32px), (max-width: 1080px) 42vw, 540px"
+          fetchPriority="high"
+          decoding="async"
+          onLoad={() => setLoaded(true)}
+        />
+      </picture>
       <div className="portrait-proof" aria-label={language === 'en' ? 'Professional focus' : 'Enfoque profesional'}>
         <span>FULL-STACK</span><span>LINUX</span><span>DATA</span><span>APPLIED AI</span>
       </div>
@@ -247,12 +297,12 @@ function Status({ value }: { value: Project['status'] }) {
   return <span className={`status-badge status-${value.toLowerCase().replaceAll(/[^a-z]+/g, '-')}`}><CheckCircle2 size={13}/>{value}</span>
 }
 
-function ProjectCard({ project, language }: { project: Project; language: Language }) {
-  return <article className="project-card">
+function ProjectCard({ project, language, featured = false }: { project: Project; language: Language; featured?: boolean }) {
+  return <article className={`project-card ${featured ? 'project-card-featured' : ''}`}>
     <div className="project-card-top"><span className="project-index">{String(projects.indexOf(project) + 1).padStart(2, '0')}</span><Status value={project.status}/></div>
-    <p className="mono-label">{project.kind}</p>
+    <div className="project-classification"><p className="mono-label">{project.kind}</p><span>{project.categories.filter((category) => category !== 'featured').slice(0, 2).map((category) => categoryLabels[category][language]).join(' · ')}</span></div>
     <h3>{project.name}</h3>
-    <p>{project.overview[language]}</p>
+    <p className="project-summary">{project.overview[language]}</p>
     <div className="tag-list">{project.technologies.slice(0, 4).map((tag) => <span key={tag}>{tag}</span>)}</div>
     <div className="project-result"><b>{copy[language].results}</b><span>{project.results[language]}</span></div>
     <a className="card-link" href={`#/projects/${project.slug}`}>{copy[language].details}<ArrowRight size={16}/></a>
@@ -302,10 +352,10 @@ function Section({ id, eyebrow, title, children, className = '' }: { id?: string
 
 function HomePage({ language }: { language: Language }) {
   const t = copy[language]
-  const featured = projects.filter((project) => project.featured).slice(0, 6)
+  const featured = projects.filter((project) => project.featured).slice(0, 4)
   return <main id="main-content">
     <section className="hero section-frame">
-      <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><h1>{t.heroTitleA}<br/><em>{t.heroTitleB}</em></h1><p className="hero-lead">{t.heroBody}</p>
+      <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><p className="hero-role">{t.heroRole}</p><h1>{t.heroTitleA}<br/><em>{t.heroTitleB}</em></h1><p className="hero-lead">{t.heroBody}</p>
         <div className="hero-domain-row" aria-label={language === 'en' ? 'Engineering focus areas' : 'Áreas de enfoque de ingeniería'}>{['ML systems', 'Infrastructure', 'Data integration', 'Full-stack'].map((area) => <span key={area}>{area}</span>)}</div>
         <div className="hero-actions"><a className="button primary" href="#/projects">{t.viewProjects}<ArrowRight size={17}/></a><a className="button secondary" href="#/resume">{t.resume}</a></div>
         <p className="availability"><Globe2 size={16}/>{t.availability}</p></div>
@@ -313,7 +363,7 @@ function HomePage({ language }: { language: Language }) {
     </section>
     <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">13</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
     <Section eyebrow="01 / About" title={t.aboutTitle}><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
-    <Section eyebrow="02 / Work" title={t.featured} className="featured-section"><p className="section-intro">{t.featuredBody}</p><div className="project-grid featured-grid">{featured.map((project) => <ProjectCard key={project.slug} project={project} language={language}/>)}</div><a className="button secondary section-cta" href="#/projects">{t.allProjects}<ArrowRight size={17}/></a></Section>
+    <Section eyebrow="02 / Work" title={t.featured} className="featured-section"><p className="section-intro">{t.featuredBody}</p><div className="project-grid featured-grid">{featured.map((project, index) => <ProjectCard key={project.slug} project={project} language={language} featured={index === 0}/>)}</div><a className="button secondary section-cta" href="#/projects">{t.allProjects}<ArrowRight size={17}/></a></Section>
     <Section id="experience" eyebrow="03 / Timeline" title={t.experience}><div className="timeline">{experience.map((item, index) => <article key={item.company}><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div className="timeline-content"><div className="timeline-heading"><div><h3>{item.company}</h3><p>{item.role}</p></div><time>{item.period[language]}</time></div><p>{item.description[language]}</p><p>{item.details[language]}</p><div className="evidence-callout"><CheckCircle2 size={18}/><span>{item.result[language]}</span></div></div></article>)}</div></Section>
     <AutismoConectaCaseStudy language={language}/>
     <Section eyebrow="05 / Education" title={t.education}><div className="education-grid"><article><p className="mono-label">Universidad Central de Chile</p><h3>Civil Engineering in Computing and Informatics</h3><p>{t.academicPending}</p><div className="tag-list">{['Algorithms', 'Java & OOP', 'Databases', 'Linux & Red Hat', 'Networking', 'Machine Learning', 'Arduino'].map((item) => <span key={item}>{item}</span>)}</div><p>{language === 'en' ? 'Teaching-assistant experience in Physics and Probability.' : 'Experiencia como ayudante en Física y Probabilidad.'}</p></article><article className="recognition-card"><p className="mono-label">Recognition · 2026</p><h3>NeuroFAST</h3><p>{language === 'en' ? 'Selected in the first national stage of the UDD Impacto Emprendedor 2026 competition and participated in formative activities. This does not mean the project won or has clinical validation.' : 'Seleccionado en la primera etapa nacional de Impacto Emprendedor UDD 2026 y participante en actividades formativas. Esto no significa que ganó ni que tenga validación clínica.'}</p><a className="text-link" href="#/projects/neurofast">{t.details}<ChevronRight size={15}/></a></article></div></Section>
@@ -346,7 +396,27 @@ function ResumePage({ language }: { language: Language }) {
 
 function Contact({ language }: { language: Language }) {
   const t = copy[language]
-  return <section id="contact" className="contact-section"><div><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/><span><small>{language === 'en' ? 'Email' : 'Correo'}</small>sebastroza10@gmail.com</span></a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/><span><small>LinkedIn</small>LinkedIn — Sebastián Astroza</span></a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/><span><small>GitHub</small>github.com/sebastroza1</span></a><a href="https://sebastroza1.github.io/" target="_blank" rel="noreferrer"><Globe2/><span><small>{language === 'en' ? 'Portfolio' : 'Portafolio'}</small>sebastroza1.github.io</span></a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/><span><small>English credential</small>EF SET · Global C1</span></a></div></section>
+  const [copied, setCopied] = useState(false)
+  async function copyEmail() {
+    if (!navigator.clipboard) return
+    try {
+      await navigator.clipboard.writeText('sebastroza10@gmail.com')
+      setCopied(true)
+      window.setTimeout(() => setCopied(false), 1800)
+    } catch { setCopied(false) }
+  }
+  return <section id="contact" className="contact-section"><div className="contact-copy"><p className="eyebrow">07 / Contact</p><h2>{t.contactTitle}</h2><p>{t.contactBody}</p><button className="copy-email" onClick={copyEmail} type="button">{copied ? <Check size={16}/> : <Copy size={16}/>}<span aria-live="polite">{copied ? (language === 'en' ? 'Email copied' : 'Correo copiado') : (language === 'en' ? 'Copy email' : 'Copiar correo')}</span></button></div><div className="contact-links"><a href="mailto:sebastroza10@gmail.com"><Mail/><span><small>{language === 'en' ? 'Email' : 'Correo'}</small>sebastroza10@gmail.com</span><ArrowRight size={17}/></a><a href="https://www.linkedin.com/in/sebastian-a-677745276/" target="_blank" rel="noreferrer"><Linkedin/><span><small>LinkedIn</small>LinkedIn — Sebastián Astroza</span><ExternalLink size={15}/></a><a href="https://github.com/sebastroza1" target="_blank" rel="noreferrer"><Github/><span><small>GitHub</small>github.com/sebastroza1</span><ExternalLink size={15}/></a><a href="https://sebastroza1.github.io/" target="_blank" rel="noreferrer"><Globe2/><span><small>{language === 'en' ? 'Portfolio' : 'Portafolio'}</small>sebastroza1.github.io</span><ExternalLink size={15}/></a><a href="https://cert.efset.org/m27XNx" target="_blank" rel="noreferrer"><Languages/><span><small>{language === 'en' ? 'English credential' : 'Certificación de inglés'}</small>EF SET · Global C1</span><ExternalLink size={15}/></a></div></section>
+}
+
+function BackToTop({ language }: { language: Language }) {
+  const [visible, setVisible] = useState(false)
+  useEffect(() => {
+    const update = () => setVisible(window.scrollY > 900)
+    update()
+    window.addEventListener('scroll', update, { passive: true })
+    return () => window.removeEventListener('scroll', update)
+  }, [])
+  return <button className={visible ? 'back-to-top visible' : 'back-to-top'} type="button" onClick={() => window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' })} aria-label={language === 'en' ? 'Back to top' : 'Volver arriba'}><ArrowUp size={18}/></button>
 }
 
 function Footer({ language }: { language: Language }) {
@@ -357,7 +427,45 @@ export default function App() {
   const route = useRoute()
   const { language, setLanguage, theme, setTheme } = usePreferences()
   useScrollReveal(route)
-  useEffect(() => { if (!route.startsWith('/projects/')) document.title = 'Sebastián Astroza — Software Engineering Portfolio'; window.scrollTo({ top: 0 }) }, [route])
+  useEffect(() => {
+    if (!route.startsWith('/projects/')) document.title = 'Sebastián Astroza — Software Engineering Portfolio'
+    if (route.startsWith('/#')) {
+      const id = route.slice(2)
+      let cancelled = false
+      const timer = window.setTimeout(() => {
+        const target = document.getElementById(id)
+        if (!target) return
+        // `content-visibility: auto` keeps the long home page fast, but some
+        // mobile browsers initially lay out skipped sections with placeholders.
+        // Resolve the real home-page geometry once before jumping to a deep link.
+        const sections = [...document.querySelectorAll<HTMLElement>('main#main-content > .content-section')]
+        const previousVisibility = sections.map((section) => section.style.contentVisibility)
+        const previousBehavior = document.documentElement.style.scrollBehavior
+        sections.forEach((section) => { section.style.contentVisibility = 'visible' })
+        document.documentElement.style.scrollBehavior = 'auto'
+        const jumpToTarget = () => {
+          const headerOffset = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 72
+          const top = target.getBoundingClientRect().top + window.scrollY - headerOffset - 12
+          window.scrollTo({ top: Math.max(0, top), behavior: 'auto' })
+        }
+        window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
+          if (cancelled) return
+          jumpToTarget()
+          window.setTimeout(() => {
+            if (cancelled) return
+            sections.forEach((section, index) => { section.style.contentVisibility = previousVisibility[index] })
+            window.requestAnimationFrame(() => {
+              if (cancelled) return
+              jumpToTarget()
+              document.documentElement.style.scrollBehavior = previousBehavior
+            })
+          }, 80)
+        }))
+      }, 40)
+      return () => { cancelled = true; window.clearTimeout(timer) }
+    } else window.scrollTo({ top: 0 })
+  }, [route])
   const detail = route.startsWith('/projects/') ? projects.find((project) => project.slug === route.split('/')[2]) : undefined
-  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} route={route}/><div className="route-shell" key={route}>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}</div><Footer language={language}/></>
+  const routeKey = route.startsWith('/#') ? '/' : route
+  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} route={route}/><div className="route-shell" key={routeKey}>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}</div><Footer language={language}/><BackToTop language={language}/></>
 }

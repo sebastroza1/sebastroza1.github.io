@@ -30,7 +30,8 @@ npm run typecheck
 npm test
 npm run build
 npm run e2e
+node scripts/capture.mjs
 python scripts/validate_resume_artifacts.py
 ```
 
-Review outbound links, both public resume PDFs, the portrait, dependency updates, reduced-motion behavior, mobile layout and both interface languages before each release. Regenerate editable sources only inside ignored `tmp/resume-build/`, re-export the PDFs, inspect every page and rerun the artifact validator before publishing.
+Review outbound links, both public resume PDFs, both portrait variants, dependency updates, focus/Escape behavior, reduced-motion behavior, the required responsive capture matrix and both interface languages before each release. Regenerate editable sources only inside ignored `tmp/resume-build/`, re-export the PDFs, inspect every page and rerun the artifact validator before publishing.
