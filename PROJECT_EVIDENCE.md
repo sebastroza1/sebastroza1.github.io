@@ -4,7 +4,7 @@ Audit date: 2026-10-30. “Public repository” means the portfolio links to ins
 
 | Portfolio project | Primary evidence | Evidence boundary |
 |---|---|---|
-| Engineering Portfolio Delivery | [sebastroza1.github.io](https://github.com/sebastroza1/sebastroza1.github.io), `VALIDATION.md`, pull requests, GitHub Actions and Pages deployments | Static portfolio engineering only; Lighthouse is synthetic and no analytics, backend or real-user monitoring is claimed |
+| Engineering Portfolio Delivery | [sebastroza1.github.io](https://github.com/sebastroza1/sebastroza1.github.io), `VALIDATION.md`, responsive before/after captures, `docs/evidence/navigation-transitions-v2.webm`, pull requests, GitHub Actions and Pages deployments | Static portfolio engineering only; Lighthouse is synthetic and no analytics, backend or real-user monitoring is claimed |
 | Reproducible PyTorch Benchmarking | [mlops-gpu-benchmark-lab](https://github.com/sebastroza1/mlops-gpu-benchmark-lab), `RESULTS.md`, commit `a28eceb`, CI run `40824821285` | Quick CPU evidence only; no CUDA benchmark claim |
 | Collaboration Ops Lab | [collaboration-ops-lab](https://github.com/sebastroza1/collaboration-ops-lab), commit `fef648a`, CI run `40959343791`, 15 tests | Synthetic fixtures and zero-write dry-run only; live Graph and tenant administration are not claimed |
 | Web Performance Evidence Lab | [web-performance-evidence](https://github.com/sebastroza1/web-performance-evidence), commit `4cd204f`, CI run `40959346799`, 10 tests, reproducible Markdown/SVG | Owner-provided local p75 sample; not real-user telemetry or causal evidence |

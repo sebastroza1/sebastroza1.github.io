@@ -17,7 +17,7 @@ React views + hash routing ──► Vite production bundle ──► GitHub Pag
 ## Decisions
 
 - **Hash routing:** supports direct navigation on GitHub Pages without a server rewrite rule or a 404 fallback script.
-- **Progressive route transitions:** the native View Transitions API enhances supported browsers; a short CSS fallback preserves compatibility and `prefers-reduced-motion` removes non-essential movement.
+- **One progressive transition system:** supported browsers use a named View Transition for route content while the header remains coordinated and stable; the route-shell animation is fallback-only, avoiding double animation. Section navigation uses deliberate scroll, focus transfer and a short arrival cue. `prefers-reduced-motion` removes non-essential movement.
 - **Typed local content:** claims can be reviewed in pull requests, do not depend on a live API, and cannot leak a GitHub token.
 - **Bounded professional evidence:** owner-provided experience is explicitly separated from repository-level authorship evidence. Private code, infrastructure and user data are excluded.
 - **Direction-aware performance evidence:** the case-study panel distinguishes improvements from regressions, preserves the supplied local measurements and links calculations to a reproducible public lab.
@@ -25,7 +25,8 @@ React views + hash routing ──► Vite production bundle ──► GitHub Pag
 - **CSS architecture:** Tailwind provides the build pipeline; `src/styles.css` defines reusable color, spacing, radius and elevation tokens plus component-scoped editorial layouts. No animation library is shipped.
 - **Responsive media:** `<picture>` selects a 94 KB mobile portrait while desktop retains the higher-resolution transparent source. Intrinsic dimensions reserve layout space and avoid CLS.
 - **Rendering budget:** off-screen home sections use `content-visibility: auto` with an intrinsic fallback size, reducing initial style/layout work without removing content from the document.
-- **Mobile navigation:** a focus-managed menu supports Escape, focus containment, active section state, scroll restoration and 44 px or larger touch targets.
+- **Content-driven navigation:** desktop and tablet widths retain a compact horizontal bar while the 760 px-and-below layout uses a solid, bounded mobile panel. It supports Escape, focus containment, active section state, scroll restoration and 44 px or larger touch targets.
+- **Editorial grids without artificial offsets:** About, timeline, evidence, education and skills use intrinsic Grid/Flex layouts rather than percentage-based left margins. Featured work uses one horizontal lead case plus three equal supporting cards on wide screens, a 2×2 grid on tablets and content-height cards on phones.
 - **Bilingual data:** every substantive project field stores an English and Spanish value. Technology and repository names remain unchanged.
 - **No unverified downloads:** resume options render as unavailable until their PDF exists and has been checked.
 
