@@ -134,8 +134,8 @@ test('increased text size preserves navigation and avoids horizontal scrolling',
   await page.addStyleTag({ content: 'html { font-size: 125% !important; }' })
   expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
   await expect(page.getByRole('link', { name: 'View projects' })).toBeVisible()
-  await page.getByRole('button', { name: 'Open navigation' }).click()
   await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden()
 })
 
 test('scroll reveal and route transitions activate without blocking content', async ({ page }) => {
@@ -144,9 +144,19 @@ test('scroll reveal and route transitions activate without blocking content', as
   await proofBand.scrollIntoViewIfNeeded()
   await expect(proofBand).toHaveClass(/is-visible/)
 
+  await page.evaluate(() => {
+    const documentWithTransitions = document as Document & { startViewTransition?: (callback: () => void) => unknown }
+    const transition = documentWithTransitions.startViewTransition?.bind(document)
+    ;(window as typeof window & { transitionCount: number }).transitionCount = 0
+    if (transition) documentWithTransitions.startViewTransition = (callback) => {
+      ;(window as typeof window & { transitionCount: number }).transitionCount += 1
+      return transition(callback)
+    }
+  })
   await page.getByRole('link', { name: 'View projects' }).click()
   await expect(page.locator('.route-shell')).toBeVisible()
   await expect(page.locator('.nav-links button').filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page')
+  await expect.poll(() => page.evaluate(() => (window as typeof window & { transitionCount: number }).transitionCount)).toBeGreaterThan(0)
 })
 
 test('direct section routes and browser history preserve navigation context', async ({ page }, testInfo) => {
@@ -156,8 +166,65 @@ test('direct section routes and browser history preserve navigation context', as
   if (testInfo.project.name.includes('mobile')) await page.getByRole('button', { name: 'Open navigation' }).click()
   await page.getByRole('button', { name: 'Experience' }).click()
   await expect(page.getByRole('heading', { name: 'Professional experience' })).toBeInViewport()
+  await expect(page.getByRole('heading', { name: 'Professional experience' })).toBeFocused()
+  await expect(page.locator('#experience')).toHaveClass(/section-arrival/)
   await page.goBack()
   await expect(page.getByRole('heading', { name: 'Engineering skills' })).toBeInViewport()
+})
+
+test('compressed desktop navigation and editorial grids stay balanced', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'desktop and tablet composition audit')
+  await page.setViewportSize({ width: 900, height: 900 })
+  await page.goto('/')
+  await expect(page.getByRole('button', { name: 'Projects' })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Open navigation' })).toBeHidden()
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+
+  const aboutCopy = await page.locator('.large-copy').boundingBox()
+  const aboutFacts = await page.locator('.about-facts').boundingBox()
+  expect(aboutCopy).not.toBeNull()
+  expect(aboutFacts).not.toBeNull()
+  expect(aboutCopy!.width).toBeGreaterThan(360)
+  expect(aboutFacts!.width).toBeGreaterThan(250)
+
+  await page.setViewportSize({ width: 1440, height: 1000 })
+  await page.goto('/')
+  const featured = page.locator('.featured-grid .project-card')
+  const primary = await featured.nth(0).boundingBox()
+  const secondary = await featured.nth(1).boundingBox()
+  const third = await featured.nth(2).boundingBox()
+  expect(primary).not.toBeNull()
+  expect(secondary).not.toBeNull()
+  expect(third).not.toBeNull()
+  expect(primary!.width).toBeGreaterThan(secondary!.width * 2)
+  expect(primary!.height).toBeLessThan(secondary!.height * 1.25)
+  expect(Math.abs(secondary!.y - third!.y)).toBeLessThan(2)
+})
+
+test('a 200% zoom-equivalent viewport keeps navigation and actions usable', async ({ page }, testInfo) => {
+  test.skip(testInfo.project.name.includes('mobile'), 'single zoom-equivalent audit')
+  await page.setViewportSize({ width: 720, height: 900 })
+  await page.goto('/')
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+  await expect(page.getByRole('link', { name: 'View projects' })).toBeVisible()
+  await page.getByRole('button', { name: 'Open navigation' }).click()
+  await expect(page.getByRole('button', { name: 'Resume' })).toBeVisible()
+})
+
+test('primary navigation completes without browser console errors', async ({ page }, testInfo) => {
+  const errors: string[] = []
+  page.on('console', (message) => { if (message.type() === 'error') errors.push(message.text()) })
+  page.on('pageerror', (error) => errors.push(error.message))
+  await page.goto('/')
+  await page.getByRole('link', { name: 'View projects' }).click()
+  await expect(page.getByRole('heading', { name: 'Projects built to be inspected.' })).toBeVisible()
+  if (testInfo.project.name.includes('mobile')) await page.getByRole('button', { name: 'Open navigation' }).click()
+  await page.getByRole('button', { name: 'Resume' }).click()
+  await expect(page.getByRole('heading', { name: 'Resume' })).toBeVisible()
+  if (testInfo.project.name.includes('mobile')) await page.getByRole('button', { name: 'Open navigation' }).click()
+  await page.getByRole('button', { name: 'Contact' }).click()
+  await expect(page.getByRole('heading', { name: 'Let’s build useful, reliable systems.' })).toBeInViewport()
+  expect(errors).toEqual([])
 })
 
 test('reduced motion keeps revealed content visible and navigation usable', async ({ page }) => {
@@ -196,6 +263,11 @@ test('mobile menu traps focus, closes with Escape and restores scrolling', async
   await menuButton.click()
   await expect(page.getByRole('button', { name: 'Home' })).toBeFocused()
   await expect(page.locator('body')).toHaveClass(/nav-open/)
+  const panel = await page.locator('.nav-links.open').boundingBox()
+  expect(panel).not.toBeNull()
+  expect(panel!.width).toBeLessThanOrEqual(360)
+  expect(panel!.height).toBeLessThan(page.viewportSize()!.height)
+  await expect(page.locator('.nav-links.open')).toHaveCSS('background-color', 'rgb(7, 21, 34)')
   await page.keyboard.press('Escape')
   await expect(page.getByRole('button', { name: 'Home' })).not.toBeVisible()
   await expect(page.locator('body')).not.toHaveClass(/nav-open/)

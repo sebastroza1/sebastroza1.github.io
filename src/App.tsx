@@ -185,7 +185,9 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
     if (href.includes('/#')) {
       const id = href.split('#')[2]
       setActiveSection(id)
-      window.location.hash = href.slice(1)
+      document.documentElement.dataset.sectionNavigation = id
+      if (window.location.hash === href) window.dispatchEvent(new HashChangeEvent('hashchange'))
+      else window.location.hash = href.slice(1)
     } else window.location.hash = href.slice(1)
   }
   useEffect(() => setOpen(false), [route])
@@ -204,7 +206,7 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
     if (!open) return
     const previousFocus = document.activeElement as HTMLElement | null
     document.body.classList.add('nav-open')
-    window.requestAnimationFrame(() => navRef.current?.querySelector<HTMLButtonElement>('button')?.focus())
+    const focusTimer = window.setTimeout(() => navRef.current?.querySelector<HTMLButtonElement>('button')?.focus(), 60)
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.key === 'Escape') { setOpen(false); return }
       if (event.key !== 'Tab' || !headerRef.current) return
@@ -216,6 +218,7 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
     }
     document.addEventListener('keydown', handleKeyDown)
     return () => {
+      window.clearTimeout(focusTimer)
       document.removeEventListener('keydown', handleKeyDown)
       document.body.classList.remove('nav-open')
       previousFocus?.focus()
@@ -226,7 +229,8 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
   return <header className="site-header" ref={headerRef}>
     <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
     <nav id="primary-navigation" ref={navRef} className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
-      {items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}
+      <div className="nav-panel-heading" aria-hidden="true"><span>{language === 'en' ? 'Navigation' : 'Navegación'}</span><small>Portfolio / 2026</small></div>
+      <div className="nav-items">{items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}</div>
     </nav>
     <div className="header-actions">
       <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
@@ -300,12 +304,15 @@ function Status({ value }: { value: Project['status'] }) {
 function ProjectCard({ project, language, featured = false }: { project: Project; language: Language; featured?: boolean }) {
   return <article className={`project-card ${featured ? 'project-card-featured' : ''}`}>
     <div className="project-card-top"><span className="project-index">{String(projects.indexOf(project) + 1).padStart(2, '0')}</span><Status value={project.status}/></div>
-    <div className="project-classification"><p className="mono-label">{project.kind}</p><span>{project.categories.filter((category) => category !== 'featured').slice(0, 2).map((category) => categoryLabels[category][language]).join(' · ')}</span></div>
-    <h3>{project.name}</h3>
-    <p className="project-summary">{project.overview[language]}</p>
-    <div className="tag-list">{project.technologies.slice(0, 4).map((tag) => <span key={tag}>{tag}</span>)}</div>
-    <div className="project-result"><b>{copy[language].results}</b><span>{project.results[language]}</span></div>
-    <a className="card-link" href={`#/projects/${project.slug}`}>{copy[language].details}<ArrowRight size={16}/></a>
+    <div className="project-card-body">
+      <div className="project-classification"><p className="mono-label">{project.kind}</p><span>{project.categories.filter((category) => category !== 'featured').slice(0, 2).map((category) => categoryLabels[category][language]).join(' · ')}</span></div>
+      <h3>{project.name}</h3>
+      <p className="project-summary">{project.overview[language]}</p>
+      <div className="tag-list">{project.technologies.slice(0, 4).map((tag) => <span key={tag}>{tag}</span>)}</div>
+    </div>
+    <div className="project-card-evidence"><div className="project-result"><b>{copy[language].results}</b><span>{project.results[language]}</span></div>
+      <a className="card-link" href={`#/projects/${project.slug}`}>{copy[language].details}<ArrowRight size={16}/></a>
+    </div>
   </article>
 }
 
@@ -362,7 +369,7 @@ function HomePage({ language }: { language: Language }) {
       <HeroPortrait language={language}/>
     </section>
     <section className="proof-band"><div><span className="proof-number">{projects.length}</span><span>{language === 'en' ? 'documented projects' : 'proyectos documentados'}</span></div><div><span className="proof-number">13</span><span>{language === 'en' ? 'public engineering labs' : 'laboratorios públicos'}</span></div><div><span className="proof-number">2</span><span>{language === 'en' ? 'professional contexts' : 'contextos profesionales'}</span></div><div className="proof-copy"><h2>{t.proofTitle}</h2><p>{t.proofBody}</p></div></section>
-    <Section eyebrow="01 / About" title={t.aboutTitle}><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
+    <Section eyebrow="01 / About" title={t.aboutTitle} className="about-section"><div className="about-grid"><p className="large-copy">{t.aboutBody}</p><div className="about-facts"><div><b>{language === 'en' ? 'Location' : 'Ubicación'}</b><span>Santiago, Chile</span></div><div><b>{language === 'en' ? 'Languages' : 'Idiomas'}</b><span>{language === 'en' ? 'Spanish native · English C1 · French beginner · Portuguese basic' : 'Español nativo · Inglés C1 · Francés principiante · Portugués básico'}</span></div><div><b>{language === 'en' ? 'Education' : 'Educación'}</b><span>{t.academicPending}</span></div></div></div></Section>
     <Section eyebrow="02 / Work" title={t.featured} className="featured-section"><p className="section-intro">{t.featuredBody}</p><div className="project-grid featured-grid">{featured.map((project, index) => <ProjectCard key={project.slug} project={project} language={language} featured={index === 0}/>)}</div><a className="button secondary section-cta" href="#/projects">{t.allProjects}<ArrowRight size={17}/></a></Section>
     <Section id="experience" eyebrow="03 / Timeline" title={t.experience}><div className="timeline">{experience.map((item, index) => <article key={item.company}><div className="timeline-marker"><span>{String(index + 1).padStart(2, '0')}</span></div><div className="timeline-content"><div className="timeline-heading"><div><h3>{item.company}</h3><p>{item.role}</p></div><time>{item.period[language]}</time></div><p>{item.description[language]}</p><p>{item.details[language]}</p><div className="evidence-callout"><CheckCircle2 size={18}/><span>{item.result[language]}</span></div></div></article>)}</div></Section>
     <AutismoConectaCaseStudy language={language}/>
@@ -431,6 +438,8 @@ export default function App() {
     if (!route.startsWith('/projects/')) document.title = 'Sebastián Astroza — Software Engineering Portfolio'
     if (route.startsWith('/#')) {
       const id = route.slice(2)
+      const internalNavigation = document.documentElement.dataset.sectionNavigation === id
+      delete document.documentElement.dataset.sectionNavigation
       let cancelled = false
       const timer = window.setTimeout(() => {
         const target = document.getElementById(id)
@@ -443,22 +452,31 @@ export default function App() {
         const previousBehavior = document.documentElement.style.scrollBehavior
         sections.forEach((section) => { section.style.contentVisibility = 'visible' })
         document.documentElement.style.scrollBehavior = 'auto'
+        const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
         const jumpToTarget = () => {
           const headerOffset = document.querySelector<HTMLElement>('.site-header')?.offsetHeight ?? 72
           const top = target.getBoundingClientRect().top + window.scrollY - headerOffset - 12
-          window.scrollTo({ top: Math.max(0, top), behavior: 'auto' })
+          window.scrollTo({ top: Math.max(0, top), behavior: internalNavigation && !reducedMotion ? 'smooth' : 'auto' })
         }
         window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
           if (cancelled) return
-          jumpToTarget()
           window.setTimeout(() => {
             if (cancelled) return
             sections.forEach((section, index) => { section.style.contentVisibility = previousVisibility[index] })
-            window.requestAnimationFrame(() => {
+            window.requestAnimationFrame(() => window.requestAnimationFrame(() => {
               if (cancelled) return
               jumpToTarget()
               document.documentElement.style.scrollBehavior = previousBehavior
-            })
+              if (!internalNavigation) return
+              window.setTimeout(() => {
+                if (cancelled) return
+                const heading = target.querySelector<HTMLElement>('h2')
+                heading?.setAttribute('tabindex', '-1')
+                heading?.focus({ preventScroll: true })
+                target.classList.add('section-arrival')
+                window.setTimeout(() => target.classList.remove('section-arrival'), 700)
+              }, reducedMotion ? 0 : 320)
+            }))
           }, 80)
         }))
       }, 40)
