@@ -96,15 +96,15 @@ a { color: inherit; }
 .evidence-visual figcaption { margin-top: .8rem; color: var(--muted); font-size: .72rem; line-height: 1.5; }
 
 .hero-portrait { width: min(100%, 570px); justify-self: end; margin: 0; }
-.portrait-frame { position: relative; overflow: hidden; min-height: 500px; background: linear-gradient(145deg, #eef2f4, #d8e0e5); border: 1px solid #9fb1bd; box-shadow: 0 28px 80px rgb(3 11 20 / .22); isolation: isolate; }
-.portrait-frame::before { position: absolute; inset: 10px; z-index: 3; content: ''; border: 1px solid rgb(7 17 31 / .13); pointer-events: none; }
+.portrait-frame { position: relative; overflow: hidden; min-height: 500px; background: radial-gradient(circle at 50% 32%, #284a5b 0, #132a3b 38%, #07111f 78%); border: 1px solid #41677a; box-shadow: 0 28px 80px rgb(3 11 20 / .3); isolation: isolate; }
+.portrait-frame::before { position: absolute; inset: 10px; z-index: 3; content: ''; border: 1px solid rgb(215 244 250 / .13); pointer-events: none; }
 .portrait-frame::after { position: absolute; inset: 0; z-index: 1; content: ''; background: linear-gradient(180deg, transparent 55%, rgb(7 17 31 / .18)); pointer-events: none; }
 .portrait-frame img { position: relative; z-index: 0; display: block; width: 100%; height: 100%; min-height: 500px; object-fit: contain; object-position: center bottom; }
 .portrait-frame img { opacity: 0; transform: scale(1.025); transition: opacity .55s ease, transform .8s cubic-bezier(.2,.75,.2,1); }.portrait-frame.image-loaded img { opacity: 1; transform: scale(1); }
-.portrait-loader { position: absolute; inset: 0; z-index: 2; background: linear-gradient(105deg, transparent 25%, rgb(255 255 255 / .5) 43%, transparent 62%) 200% 0 / 200% 100%, linear-gradient(145deg, #dbe4e8, #cbd7dd); animation: portrait-loading 1.25s linear infinite; transition: opacity .35s ease; }.portrait-frame.image-loaded .portrait-loader { opacity: 0; pointer-events: none; }
-.portrait-status { position: absolute; z-index: 4; top: 1.25rem; right: 1.25rem; left: 1.25rem; display: flex; justify-content: space-between; color: #294557; font: 800 .58rem ui-monospace, monospace; letter-spacing: .09em; }
-.portrait-status .trace-state { color: #075d73; }
-.portrait-status .trace-state::before { background: #087f9c; border-color: #e9f0f3; }
+.portrait-loader { position: absolute; inset: 0; z-index: 2; background: linear-gradient(105deg, transparent 25%, rgb(103 232 249 / .16) 43%, transparent 62%) 200% 0 / 200% 100%, linear-gradient(145deg, #142c3d, #07111f); animation: portrait-loading 1.25s linear infinite; transition: opacity .35s ease; }.portrait-frame.image-loaded .portrait-loader { opacity: 0; pointer-events: none; }
+.portrait-status { position: absolute; z-index: 4; top: 1.25rem; right: 1.25rem; left: 1.25rem; display: flex; justify-content: space-between; color: #dff9ff; font: 800 .58rem ui-monospace, monospace; letter-spacing: .09em; }
+.portrait-status .trace-state { color: #67e8f9; }
+.portrait-status .trace-state::before { background: #22d3ee; border-color: #07111f; }
 .portrait-proof { position: absolute; z-index: 4; right: 1.25rem; bottom: 1.25rem; left: 1.25rem; display: flex; flex-wrap: wrap; gap: .35rem; }
 .portrait-proof span { padding: .36rem .48rem; color: #dff9ff; background: rgb(7 17 31 / .84); border: 1px solid #41677a; font: 700 .57rem ui-monospace, monospace; letter-spacing: .06em; }
 .hero-portrait figcaption { margin-top: .8rem; color: var(--muted); font-size: .72rem; line-height: 1.5; }

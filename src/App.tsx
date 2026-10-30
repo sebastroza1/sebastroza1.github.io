@@ -199,11 +199,12 @@ function HeroPortrait({ language }: { language: Language }) {
       <div className="portrait-status"><span>PROFILE / 2026</span><span className="trace-state">AVAILABLE</span></div>
       <span className="portrait-loader" aria-hidden="true"/>
       <img
-        src="/assets/sebastian-astroza-portrait.webp"
+        src="/assets/sebastian-astroza-portrait-v2.webp"
         alt={language === 'en' ? 'Portrait of Sebastián Astroza wearing a blue shirt' : 'Retrato de Sebastián Astroza con camisa azul'}
-        width="900"
-        height="1059"
+        width="1102"
+        height="1427"
         fetchPriority="high"
+        decoding="async"
         onLoad={() => setLoaded(true)}
       />
       <div className="portrait-proof" aria-label={language === 'en' ? 'Professional focus' : 'Enfoque profesional'}>
