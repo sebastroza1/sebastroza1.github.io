@@ -1,12 +1,17 @@
 import { chromium } from '@playwright/test'
-import { mkdir } from 'node:fs/promises'
+import { mkdir, unlink } from 'node:fs/promises'
 import { fileURLToPath } from 'node:url'
 
 const baseUrl = process.env.PORTFOLIO_URL ?? 'http://127.0.0.1:4173/'
 const outputDirectory = new URL('../docs/screenshots/', import.meta.url)
 const outputPath = (filename) => fileURLToPath(new URL(filename, outputDirectory))
+const v2Directory = new URL('v2-after/', outputDirectory)
+const v2Path = (filename) => fileURLToPath(new URL(filename, v2Directory))
+const evidenceDirectory = new URL('../docs/evidence/', import.meta.url)
 
 await mkdir(outputDirectory, { recursive: true })
+await mkdir(v2Directory, { recursive: true })
+await mkdir(evidenceDirectory, { recursive: true })
 const browser = await chromium.launch()
 
 async function prepare(page, url = baseUrl) {
@@ -34,15 +39,27 @@ async function captureSection(page, selector, filename) {
   await headerStyle.evaluate((element) => element.remove())
 }
 
+async function captureV2Section(page, selector, filename) {
+  const headerStyle = await page.addStyleTag({ content: '.site-header, .skip-link, .back-to-top { visibility: hidden !important; }' })
+  await page.locator(selector).screenshot({ path: v2Path(filename) })
+  await headerStyle.evaluate((element) => element.remove())
+}
+
 const homeViewports = [
   [320, 720, 'home-320.png'],
   [360, 800, 'home-360.png'],
+  [375, 812, 'home-375.png'],
   [390, 844, 'home-390.png'],
+  [414, 896, 'home-414.png'],
   [430, 932, 'home-430.png'],
+  [600, 900, 'home-600.png'],
   [768, 1024, 'home-tablet-768.png'],
   [820, 1180, 'home-tablet-820.png'],
+  [900, 900, 'home-compact-900.png'],
   [1024, 900, 'home-desktop-1024.png'],
+  [1180, 900, 'home-desktop-1180.png'],
   [1440, 1000, 'home-desktop-1440.png'],
+  [1280, 900, 'home-desktop-1280.png'],
   [1920, 1080, 'home-desktop-1920.png'],
   [844, 390, 'home-landscape-844.png'],
   [932, 430, 'home-landscape-932.png'],
@@ -95,5 +112,54 @@ await prepare(desktop, `${baseUrl}#/resume`)
 await desktop.screenshot({ path: outputPath('resume-desktop.png'), fullPage: true })
 await desktop.close()
 
+async function createV2Page(width, height) {
+  const page = await browser.newPage({ viewport: { width, height }, deviceScaleFactor: 1 })
+  await page.addInitScript(() => {
+    localStorage.setItem('portfolio-language', 'es')
+    localStorage.setItem('portfolio-theme', 'dark')
+  })
+  await prepare(page)
+  return page
+}
+
+const compressedNavigation = await createV2Page(900, 700)
+await compressedNavigation.screenshot({ path: v2Path('navigation-compressed-900.png') })
+await compressedNavigation.close()
+
+const mobileNavigation = await createV2Page(390, 844)
+await mobileNavigation.getByRole('button', { name: 'Abrir navegación' }).click()
+await mobileNavigation.waitForTimeout(350)
+await mobileNavigation.screenshot({ path: v2Path('navigation-mobile-open-390.png') })
+await mobileNavigation.close()
+
+for (const [width, height, suffix] of [[390, 844, 'mobile-390'], [820, 1180, 'tablet-820']]) {
+  const page = await createV2Page(width, height)
+  await captureV2Section(page, '.about-section', `about-${suffix}.png`)
+  await captureV2Section(page, '.featured-section', `featured-${suffix}.png`)
+  await page.close()
+}
+
+const featuredDesktop = await createV2Page(1440, 1000)
+await captureV2Section(featuredDesktop, '.featured-section', 'featured-desktop-1440.png')
+await featuredDesktop.close()
+
+const transitionContext = await browser.newContext({ viewport: { width: 1280, height: 800 }, recordVideo: { dir: fileURLToPath(evidenceDirectory), size: { width: 1280, height: 800 } } })
+const transitionPage = await transitionContext.newPage()
+await transitionPage.goto(baseUrl, { waitUntil: 'networkidle' })
+await transitionPage.waitForTimeout(500)
+const transitionVideo = transitionPage.video()
+await transitionPage.getByRole('link', { name: 'View projects' }).click()
+await transitionPage.waitForTimeout(650)
+await transitionPage.getByRole('button', { name: 'Resume' }).click()
+await transitionPage.waitForTimeout(650)
+await transitionPage.getByRole('button', { name: 'Contact' }).click()
+await transitionPage.waitForTimeout(900)
+await transitionPage.close()
+const transitionVideoPath = await transitionVideo.path()
+const savedTransitionPath = fileURLToPath(new URL('navigation-transitions-v2.webm', evidenceDirectory))
+await transitionVideo.saveAs(savedTransitionPath)
+await transitionContext.close()
+if (transitionVideoPath !== savedTransitionPath) await unlink(transitionVideoPath)
+
 await browser.close()
-console.log(`Captured ${homeViewports.length + 16} responsive portfolio views in docs/screenshots/.`)
+console.log(`Captured ${homeViewports.length + 22} responsive portfolio views and one transition video.`)

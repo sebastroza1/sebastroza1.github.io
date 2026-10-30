@@ -3,8 +3,8 @@
   "lighthouseVersion": "12.8.2",
   "url": "http://127.0.0.1:4173/",
   "mode": "local production preview, mobile lab simulation",
-  "method": "median of three consecutive runs",
-  "baseline": {
+  "method": "median of five consecutive runs",
+  "historicalBaseline": {
     "performance": 93,
     "accessibility": 100,
     "bestPractices": 100,
@@ -16,6 +16,18 @@
     "speedIndex": "1.6 s",
     "transferSize": "379 KiB"
   },
+  "v2Baseline": {
+    "performance": 96,
+    "accessibility": 100,
+    "bestPractices": 100,
+    "seo": 100,
+    "firstContentfulPaint": "1.4 s",
+    "largestContentfulPaint": "2.2 s",
+    "totalBlockingTime": "180 ms",
+    "cumulativeLayoutShift": 0,
+    "speedIndex": "2.1 s",
+    "transferSize": "205 KiB"
+  },
   "scores": {
     "performance": 96,
     "accessibility": 100,
@@ -25,10 +37,10 @@
   "metrics": {
     "firstContentfulPaint": "1.4 s",
     "largestContentfulPaint": "2.2 s",
-    "totalBlockingTime": "180 ms",
+    "totalBlockingTime": "192 ms",
     "cumulativeLayoutShift": 0,
-    "speedIndex": "2.1 s",
-    "transferSize": "205 KiB",
+    "speedIndex": "2.0 s",
+    "transferSize": "206 KiB",
     "requests": 5
   },
   "note": "Synthetic local measurement; not production real-user monitoring."

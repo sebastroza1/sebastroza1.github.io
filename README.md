@@ -8,9 +8,9 @@ The site is intentionally explicit about evidence boundaries: synthetic datasets
 
 ![Premium desktop home page](docs/screenshots/home-desktop-1440.png)
 
-The premium redesign is captured at [320 px](docs/screenshots/home-320.png), [390 px](docs/screenshots/home-390.png), [768 px](docs/screenshots/home-tablet-768.png), [1024 px](docs/screenshots/home-desktop-1024.png), [1440 px](docs/screenshots/home-desktop-1440.png) and [1920 px](docs/screenshots/home-desktop-1920.png), plus [mobile dark mode](docs/screenshots/home-mobile-dark.png). Route and section evidence includes the [project catalogue](docs/screenshots/projects-mobile.png), [portfolio case study](docs/screenshots/project-detail-mobile.png), [experience](docs/screenshots/experience-mobile.png), [skills](docs/screenshots/skills-mobile.png), [resume](docs/screenshots/resume-mobile.png) and [contact](docs/screenshots/contact-mobile.png).
+The UX/UI V2 release is captured across the full 320–1920 px test matrix, including compact desktop, tablet, mobile and landscape orientations. Focused evidence shows the [900 px navigation](docs/screenshots/v2-after/navigation-compressed-900.png), [mobile navigation panel](docs/screenshots/v2-after/navigation-mobile-open-390.png), [tablet About layout](docs/screenshots/v2-after/about-tablet-820.png), [mobile About layout](docs/screenshots/v2-after/about-mobile-390.png), [desktop featured projects](docs/screenshots/v2-after/featured-desktop-1440.png) and [tablet featured projects](docs/screenshots/v2-after/featured-tablet-820.png). A reproducible [navigation-transition video](docs/evidence/navigation-transitions-v2.webm) covers Home → Projects → Resume → Contact.
 
-Earlier captures remain under [`docs/screenshots/before/`](docs/screenshots/before/) for direct before/after comparison. The transparent portrait is also inspected on [white, black, gray and production-gradient backgrounds](docs/screenshots/portrait-background-check.png).
+The three reported V2 defects remain under [`docs/screenshots/v2-before/`](docs/screenshots/v2-before/) for direct before/after comparison; earlier release captures remain under [`docs/screenshots/before/`](docs/screenshots/before/). The transparent portrait is also inspected on [white, black, gray and production-gradient backgrounds](docs/screenshots/portrait-background-check.png).
 
 ## Stack
 

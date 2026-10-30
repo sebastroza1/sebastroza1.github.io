@@ -34,4 +34,4 @@ node scripts/capture.mjs
 python scripts/validate_resume_artifacts.py
 ```
 
-Review outbound links, both public resume PDFs, both portrait variants, dependency updates, focus/Escape behavior, reduced-motion behavior, the required responsive capture matrix and both interface languages before each release. Regenerate editable sources only inside ignored `tmp/resume-build/`, re-export the PDFs, inspect every page and rerun the artifact validator before publishing.
+Review outbound links, both public resume PDFs, both portrait variants, dependency updates, focus/Escape behavior, reduced-motion behavior, the required 320–1920 px responsive matrix, the compact 900 px header, 200% zoom-equivalent layout and both interface languages before each release. `scripts/capture.mjs` also records the focused V2 before/after evidence and navigation-transition video. Regenerate editable sources only inside ignored `tmp/resume-build/`, re-export the PDFs, inspect every page and rerun the artifact validator before publishing.
