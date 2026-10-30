@@ -48,6 +48,20 @@ test('portrait and direct contact links are visible and correctly targeted', asy
   const portrait = page.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })
   await expect(portrait).toBeVisible()
   await expect(portrait).toHaveJSProperty('complete', true)
+  await expect(portrait).toHaveAttribute('src', '/assets/sebastian-astroza-portrait-v2.webp')
+  const transparentTopCorners = await portrait.evaluate((element) => {
+    const image = element as HTMLImageElement
+    const canvas = document.createElement('canvas')
+    canvas.width = image.naturalWidth
+    canvas.height = image.naturalHeight
+    const context = canvas.getContext('2d')!
+    context.drawImage(image, 0, 0)
+    return [
+      context.getImageData(0, 0, 1, 1).data[3],
+      context.getImageData(canvas.width - 1, 0, 1, 1).data[3],
+    ]
+  })
+  expect(transparentTopCorners).toEqual([0, 0])
   if (testInfo.project.name.includes('mobile')) {
     const box = await portrait.boundingBox()
     expect(box).not.toBeNull()

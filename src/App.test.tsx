@@ -60,7 +60,7 @@ describe('portfolio interactions', () => {
 
   it('shows the professional portrait and exact contact destinations', () => {
     render(<App />)
-    expect(screen.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })).toHaveAttribute('src', '/assets/sebastian-astroza-portrait.webp')
+    expect(screen.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })).toHaveAttribute('src', '/assets/sebastian-astroza-portrait-v2.webp')
     expect(screen.getByRole('link', { name: /sebastroza10@gmail.com/i })).toHaveAttribute('href', 'mailto:sebastroza10@gmail.com')
     expect(screen.getByRole('link', { name: /LinkedIn — Sebastián Astroza/i })).toHaveAttribute('href', 'https://www.linkedin.com/in/sebastian-a-677745276/')
   })
