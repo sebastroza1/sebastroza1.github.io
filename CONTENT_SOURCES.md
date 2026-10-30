@@ -32,6 +32,8 @@ When a higher-confidence source was unavailable, the site avoids a metric or use
 
 The existing eleven ML and storage laboratory metrics, commit identifiers, workflow run identifiers, limitations and test counts were extracted from their public README/result artifacts and checked against the repositories listed in [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md). The two new engineering labs were validated locally and by their first successful GitHub Actions runs before the portfolio update was published.
 
+The portfolio is also treated as an engineering project. Its public evidence is limited to this repository's source, pull requests, automated checks, visual captures and GitHub Pages deployment history; no visitor analytics or real-user performance data is claimed.
+
 Older academic repositories were used only for technologies and visible implementation structure. Where current execution or licensing was not revalidated, the site says so.
 
 LandFinder Chile was inspected through authenticated read access to its private repository and README. The portfolio summarizes implemented architecture and documented capabilities, but deliberately publishes no private source link, secrets or internal files. It remains labelled in development, not deployed and not a completed MVP.

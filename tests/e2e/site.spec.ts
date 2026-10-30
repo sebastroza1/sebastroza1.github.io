@@ -32,10 +32,10 @@ test('language and theme choices survive navigation', async ({ page }) => {
   await expect(page.locator('html')).toHaveClass(/dark/)
 })
 
-test('resume route publishes four working downloadable artifacts', async ({ page, request }) => {
+test('resume route publishes two working PDF-only downloads', async ({ page, request }) => {
   await page.goto('/#/resume')
   const downloadLinks = page.getByRole('main').getByRole('link')
-  await expect(downloadLinks).toHaveCount(4)
+  await expect(downloadLinks).toHaveCount(2)
   const targets = await downloadLinks.evaluateAll((links) => links.map((link) => link.getAttribute('href')).filter(Boolean) as string[])
   for (const target of targets) {
     const response = await request.get(target)
@@ -44,10 +44,16 @@ test('resume route publishes four working downloadable artifacts', async ({ page
   }
 })
 
-test('portrait and direct contact links are visible and correctly targeted', async ({ page }) => {
+test('portrait and direct contact links are visible and correctly targeted', async ({ page }, testInfo) => {
   const portrait = page.getByRole('img', { name: 'Portrait of Sebastián Astroza wearing a blue shirt' })
   await expect(portrait).toBeVisible()
   await expect(portrait).toHaveJSProperty('complete', true)
+  if (testInfo.project.name.includes('mobile')) {
+    const box = await portrait.boundingBox()
+    expect(box).not.toBeNull()
+    expect(box!.width).toBeLessThanOrEqual(page.viewportSize()!.width)
+    expect(box!.height).toBeLessThan(page.viewportSize()!.height * 0.62)
+  }
   await page.getByRole('link', { name: /sebastroza10@gmail.com/i }).scrollIntoViewIfNeeded()
   await expect(page.getByRole('link', { name: /sebastroza10@gmail.com/i })).toHaveAttribute('href', 'mailto:sebastroza10@gmail.com')
   await expect(page.getByRole('link', { name: /LinkedIn — Sebastián Astroza/i })).toHaveAttribute('href', 'https://www.linkedin.com/in/sebastian-a-677745276/')
@@ -60,14 +66,32 @@ test('every published project card resolves to one unique detail route', async (
     elements.map((element) => element.getAttribute('href')).filter((href): href is string => Boolean(href)),
   )
   const uniqueLinks = [...new Set(links)]
-  expect(uniqueLinks).toHaveLength(18)
-  expect(links).toHaveLength(18)
+  expect(uniqueLinks).toHaveLength(19)
+  expect(links).toHaveLength(19)
 
   for (const href of uniqueLinks) {
     await page.goto(`/${href}`)
     await expect(page.locator('main.detail-page')).toBeVisible()
     await expect(page.getByRole('link', { name: 'Back to projects' })).toBeVisible()
   }
+})
+
+test('responsive routes do not create horizontal overflow', async ({ page }) => {
+  for (const route of ['/', '/#/projects', '/#/resume']) {
+    await page.goto(route)
+    await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth <= document.documentElement.clientWidth)).toBe(true)
+  }
+})
+
+test('scroll reveal and route transitions activate without blocking content', async ({ page }) => {
+  const proofBand = page.locator('.proof-band')
+  await expect(proofBand).toHaveClass(/reveal-target/)
+  await proofBand.scrollIntoViewIfNeeded()
+  await expect(proofBand).toHaveClass(/is-visible/)
+
+  await page.getByRole('link', { name: 'View projects' }).click()
+  await expect(page.locator('.route-shell')).toBeVisible()
+  await expect(page.locator('.nav-links button').filter({ hasText: 'Projects' })).toHaveAttribute('aria-current', 'page')
 })
 
 test('mobile menu opens and reaches projects', async ({ page }, testInfo) => {

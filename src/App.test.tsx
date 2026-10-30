@@ -49,13 +49,13 @@ describe('portfolio interactions', () => {
     expect(within(cards[0]).getByRole('heading', { name: 'C++ File Integrity Toolkit' })).toBeInTheDocument()
   })
 
-  it('publishes validated English and Spanish resume downloads', () => {
+  it('publishes only validated English and Spanish PDF resumes', () => {
     window.location.hash = '#/resume'
     render(<App />)
     const pdfLinks = screen.getAllByRole('link', { name: 'Download PDF' })
     expect(pdfLinks).toHaveLength(2)
     expect(pdfLinks[0]).toHaveAttribute('href', '/cv/Sebastian_Astroza_Software_Engineer_General_2026.pdf')
-    expect(screen.getAllByRole('link', { name: 'Editable DOCX' })).toHaveLength(2)
+    expect(screen.queryByRole('link', { name: 'Editable DOCX' })).not.toBeInTheDocument()
   })
 
   it('shows the professional portrait and exact contact destinations', () => {
@@ -79,5 +79,12 @@ describe('portfolio interactions', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Clear filters' }))
     fireEvent.change(screen.getByLabelText('Search projects'), { target: { value: 'performance evidence' } })
     expect(screen.getAllByRole('heading', { name: 'Web Performance Evidence Lab' })).toHaveLength(1)
+  })
+
+  it('presents the portfolio delivery workflow as a documented project', () => {
+    render(<ProjectExplorer language="en" />)
+    fireEvent.change(screen.getByLabelText('Search projects'), { target: { value: 'portfolio delivery' } })
+    expect(screen.getByRole('heading', { name: 'Engineering Portfolio Delivery' })).toBeInTheDocument()
+    expect(screen.getByText(/branch, pull-request, CI and GitHub Pages workflow/i)).toBeInTheDocument()
   })
 })

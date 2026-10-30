@@ -8,7 +8,7 @@ The site is intentionally explicit about evidence boundaries: synthetic datasets
 
 ![Desktop home page](docs/screenshots/home-desktop.png)
 
-The portrait-led hero is documented in [desktop](docs/screenshots/hero-desktop.png) and [mobile](docs/screenshots/hero-mobile.png) captures. The [resume page](docs/screenshots/resume-desktop.png), [mobile project catalogue](docs/screenshots/projects-mobile.png) and bounded AutismoConecta case study in [desktop](docs/screenshots/autismoconecta-case-study-desktop.png) and [mobile](docs/screenshots/autismoconecta-case-study-mobile.png) are also captured from the production build.
+The portrait-led hero is documented in [desktop](docs/screenshots/hero-desktop.png), [compact desktop](docs/screenshots/hero-compact-desktop.png), [360 px mobile](docs/screenshots/hero-mobile-360.png) and [mobile dark mode](docs/screenshots/hero-mobile-dark.png) captures. The [resume page](docs/screenshots/resume-desktop.png), [mobile project catalogue](docs/screenshots/projects-mobile.png) and bounded AutismoConecta case study in [desktop](docs/screenshots/autismoconecta-case-study-desktop.png) and [mobile](docs/screenshots/autismoconecta-case-study-mobile.png) are also captured from the production build.
 
 ## Stack
 
@@ -45,7 +45,7 @@ npm run e2e
 
 Project content is typed and versioned in `src/data/projects.ts`. See [MAINTENANCE.md](MAINTENANCE.md) before adding or changing claims, [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md) for the evidence map, and [PROFESSIONAL_EVIDENCE_PUBLIC.md](PROFESSIONAL_EVIDENCE_PUBLIC.md) for the public authorship boundary.
 
-The resume page publishes a general English and Spanish CV in both PDF and editable DOCX. The files are generated from `scripts/generate_resumes.py`, converted locally with Microsoft Word, visually inspected, checked for selectable text and clickable links, and validated by `scripts/validate_resume_artifacts.py`. The public portrait is a locally processed WebP; the original source image remains excluded from Git.
+The resume page publishes general English and Spanish CVs as PDF-only downloads. Editable DOCX files are intermediate local build artifacts under the ignored `tmp/` directory and are never published. The PDFs are visually inspected, checked for selectable text and clickable links, and validated by `scripts/validate_resume_artifacts.py`. The public portrait is a locally processed WebP; the original source image remains excluded from Git.
 
 ## Documentation
 
