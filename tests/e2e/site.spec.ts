@@ -159,6 +159,23 @@ test('scroll reveal and route transitions activate without blocking content', as
   await expect.poll(() => page.evaluate(() => (window as typeof window & { transitionCount: number }).transitionCount)).toBeGreaterThan(0)
 })
 
+test('floating navigation compacts on scroll without covering the content', async ({ page }) => {
+  const header = page.locator('.site-header')
+  await page.waitForTimeout(600)
+  const initialBox = await header.boundingBox()
+  expect(initialBox).not.toBeNull()
+  expect(initialBox!.x).toBeGreaterThan(0)
+  expect(initialBox!.width).toBeLessThan(page.viewportSize()!.width)
+
+  await page.evaluate(() => window.scrollTo(0, 500))
+  await expect(header).toHaveClass(/is-scrolled/)
+  await page.waitForTimeout(450)
+  const compactBox = await header.boundingBox()
+  expect(compactBox).not.toBeNull()
+  expect(compactBox!.y).toBeGreaterThan(0)
+  expect(compactBox!.height).toBeLessThanOrEqual(initialBox!.height)
+})
+
 test('direct section routes and browser history preserve navigation context', async ({ page }, testInfo) => {
   await page.goto('/#/#skills')
   await expect(page.getByRole('heading', { name: 'Engineering skills' })).toBeInViewport()
@@ -272,4 +289,7 @@ test('mobile menu traps focus, closes with Escape and restores scrolling', async
   await expect(page.getByRole('button', { name: 'Home' })).not.toBeVisible()
   await expect(page.locator('body')).not.toHaveClass(/nav-open/)
   await expect(menuButton).toBeFocused()
+  await menuButton.click()
+  await page.locator('.menu-button').click()
+  await expect(page.getByRole('button', { name: 'Home' })).not.toBeVisible()
 })

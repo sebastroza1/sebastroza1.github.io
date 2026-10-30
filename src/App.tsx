@@ -173,6 +173,7 @@ function useScrollReveal(route: string) {
 
 function Header({ language, setLanguage, theme, setTheme, route }: { language: Language; setLanguage: (value: Language) => void; theme: Theme; setTheme: (value: Theme) => void; route: string }) {
   const [open, setOpen] = useState(false)
+  const [scrolled, setScrolled] = useState(false)
   const [activeSection, setActiveSection] = useState('')
   const headerRef = useRef<HTMLElement>(null)
   const navRef = useRef<HTMLElement>(null)
@@ -191,6 +192,12 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
     } else window.location.hash = href.slice(1)
   }
   useEffect(() => setOpen(false), [route])
+  useEffect(() => {
+    const updateHeader = () => setScrolled(window.scrollY > 24)
+    updateHeader()
+    window.addEventListener('scroll', updateHeader, { passive: true })
+    return () => window.removeEventListener('scroll', updateHeader)
+  }, [])
   useEffect(() => {
     if (!(route === '/' || route.startsWith('/#')) || typeof IntersectionObserver === 'undefined') return
     const sections = ['experience', 'skills', 'contact'].map((id) => document.getElementById(id)).filter(Boolean) as HTMLElement[]
@@ -226,19 +233,21 @@ function Header({ language, setLanguage, theme, setTheme, route }: { language: L
   }, [open])
   const isHomeRoute = route === '/' || route.startsWith('/#')
   const isActive = (href: string) => href === '#/' ? route === '/' && !activeSection : href.includes('/#') ? isHomeRoute && activeSection === href.split('#')[2] : href === '#/projects' ? route.startsWith('/projects') : href === '#/resume' ? route === '/resume' : false
-  return <header className="site-header" ref={headerRef}>
-    <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
-    <nav id="primary-navigation" ref={navRef} className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
-      <div className="nav-panel-heading" aria-hidden="true"><span>{language === 'en' ? 'Navigation' : 'Navegación'}</span><small>Portfolio / 2026</small></div>
-      <div className="nav-items">{items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}</div>
-    </nav>
-    <div className="header-actions">
-      <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
-      <button className="icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
-      <button className="icon-button menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? (language === 'en' ? 'Close navigation' : 'Cerrar navegación') : (language === 'en' ? 'Open navigation' : 'Abrir navegación')}>{open ? <X/> : <Menu/>}</button>
-    </div>
-    <button className={open ? 'nav-scrim open' : 'nav-scrim'} aria-label={language === 'en' ? 'Close navigation' : 'Cerrar navegación'} onClick={() => setOpen(false)} tabIndex={open ? 0 : -1}/>
-  </header>
+  return <>
+    <header className={`site-header${scrolled ? ' is-scrolled' : ''}`} ref={headerRef}>
+      <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
+      <nav id="primary-navigation" ref={navRef} className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
+        <div className="nav-panel-heading" aria-hidden="true"><span>{language === 'en' ? 'Navigation' : 'Navegación'}</span><small>Portfolio / 2026</small></div>
+        <div className="nav-items">{items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}</div>
+      </nav>
+      <div className="header-actions">
+        <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
+        <button className="icon-button" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')} aria-label={theme === 'dark' ? 'Use light theme' : 'Use dark theme'}>{theme === 'dark' ? <Sun size={18}/> : <Moon size={18}/>}</button>
+        <button className="icon-button menu-button" onClick={() => setOpen(!open)} aria-expanded={open} aria-controls="primary-navigation" aria-label={open ? (language === 'en' ? 'Close navigation' : 'Cerrar navegación') : (language === 'en' ? 'Open navigation' : 'Abrir navegación')}>{open ? <X/> : <Menu/>}</button>
+      </div>
+    </header>
+    <button type="button" className={open ? 'nav-scrim open' : 'nav-scrim'} aria-label={language === 'en' ? 'Close navigation' : 'Cerrar navegación'} onClick={() => setOpen(false)} tabIndex={-1}/>
+  </>
 }
 
 function HeroPortrait({ language }: { language: Language }) {
