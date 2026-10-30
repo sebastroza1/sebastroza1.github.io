@@ -1,6 +1,6 @@
 # Project Evidence Map
 
-Audit date: 2026-10-29. “Public repository” means the portfolio links to inspectable source. “Owner-provided” means the claim was supplied for the portfolio and is labelled accordingly rather than presented as repository-verified.
+Audit date: 2026-10-30. “Public repository” means the portfolio links to inspectable source. “Owner-provided” means the claim was supplied for the portfolio and is labelled accordingly rather than presented as repository-verified.
 
 | Portfolio project | Primary evidence | Evidence boundary |
 |---|---|---|

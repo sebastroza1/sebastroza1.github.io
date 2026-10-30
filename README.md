@@ -6,14 +6,16 @@ The site is intentionally explicit about evidence boundaries: synthetic datasets
 
 ## Preview
 
-![Desktop home page](docs/screenshots/home-desktop.png)
+![Premium desktop home page](docs/screenshots/home-desktop-1440.png)
 
-The portrait-led hero is documented in [desktop](docs/screenshots/hero-desktop.png), [compact desktop](docs/screenshots/hero-compact-desktop.png), [360 px mobile](docs/screenshots/hero-mobile-360.png) and [mobile dark mode](docs/screenshots/hero-mobile-dark.png) captures. The [resume page](docs/screenshots/resume-desktop.png), [mobile project catalogue](docs/screenshots/projects-mobile.png) and bounded AutismoConecta case study in [desktop](docs/screenshots/autismoconecta-case-study-desktop.png) and [mobile](docs/screenshots/autismoconecta-case-study-mobile.png) are also captured from the production build.
+The premium redesign is captured at [320 px](docs/screenshots/home-320.png), [390 px](docs/screenshots/home-390.png), [768 px](docs/screenshots/home-tablet-768.png), [1024 px](docs/screenshots/home-desktop-1024.png), [1440 px](docs/screenshots/home-desktop-1440.png) and [1920 px](docs/screenshots/home-desktop-1920.png), plus [mobile dark mode](docs/screenshots/home-mobile-dark.png). Route and section evidence includes the [project catalogue](docs/screenshots/projects-mobile.png), [portfolio case study](docs/screenshots/project-detail-mobile.png), [experience](docs/screenshots/experience-mobile.png), [skills](docs/screenshots/skills-mobile.png), [resume](docs/screenshots/resume-mobile.png) and [contact](docs/screenshots/contact-mobile.png).
+
+Earlier captures remain under [`docs/screenshots/before/`](docs/screenshots/before/) for direct before/after comparison. The transparent portrait is also inspected on [white, black, gray and production-gradient backgrounds](docs/screenshots/portrait-background-check.png).
 
 ## Stack
 
 - React 19, TypeScript and Vite
-- Tailwind CSS 4 plus a small custom design system
+- Tailwind CSS 4 build pipeline plus a tokenized editorial CSS design system
 - Lucide icons
 - Vitest and React Testing Library
 - Playwright
@@ -45,7 +47,7 @@ npm run e2e
 
 Project content is typed and versioned in `src/data/projects.ts`. See [MAINTENANCE.md](MAINTENANCE.md) before adding or changing claims, [PROJECT_EVIDENCE.md](PROJECT_EVIDENCE.md) for the evidence map, and [PROFESSIONAL_EVIDENCE_PUBLIC.md](PROFESSIONAL_EVIDENCE_PUBLIC.md) for the public authorship boundary.
 
-The resume page publishes general English and Spanish CVs as PDF-only downloads. Editable DOCX files are intermediate local build artifacts under the ignored `tmp/` directory and are never published. The PDFs are visually inspected, checked for selectable text and clickable links, and validated by `scripts/validate_resume_artifacts.py`. The public portrait is a locally processed WebP; the original source image remains excluded from Git.
+The resume page publishes general English and Spanish CVs as PDF-only downloads. Editable DOCX files are intermediate local build artifacts under the ignored `tmp/` directory and are never published. The PDFs are visually inspected, checked for selectable text and clickable links, and validated by `scripts/validate_resume_artifacts.py`. The public portrait uses transparent desktop and mobile WebP variants; the original source image remains excluded from Git.
 
 ## Documentation
 

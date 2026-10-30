@@ -15,7 +15,7 @@ describe('portfolio interactions', () => {
   it('switches the complete primary interface to Spanish and persists the preference', () => {
     render(<App />)
     fireEvent.click(screen.getByRole('button', { name: 'Cambiar a español' }))
-    expect(screen.getByRole('heading', { name: /Construyendo software confiable/i })).toBeInTheDocument()
+    expect(screen.getByRole('heading', { name: /Construyo sistemas confiables/i })).toBeInTheDocument()
     expect(screen.getByText('Experiencia profesional')).toBeInTheDocument()
     expect(screen.getByText('Septiembre 2026 — actualidad')).toBeInTheDocument()
     expect(localStorage.getItem('portfolio-language')).toBe('es')
