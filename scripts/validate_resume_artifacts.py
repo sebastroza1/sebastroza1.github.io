@@ -1,8 +1,6 @@
 from __future__ import annotations
 
 from pathlib import Path
-from zipfile import ZipFile
-
 from pypdf import PdfReader
 
 
@@ -49,17 +47,6 @@ ARTIFACTS = [
 ]
 
 
-def validate_docx(path: Path) -> None:
-    with ZipFile(path) as archive:
-        names = set(archive.namelist())
-        document_xml = archive.read("word/document.xml").decode("utf-8")
-        relationships = archive.read("word/_rels/document.xml.rels").decode("utf-8")
-    assert "w:documentProtection" not in document_xml, f"{path.name}: document is protected"
-    assert not any(name.startswith("word/media/") for name in names), f"{path.name}: unexpected embedded image"
-    for address in ["mailto:sebastroza10@gmail.com", "https://github.com/sebastroza1", "https://sebastroza1.github.io"]:
-        assert address in relationships, f"{path.name}: missing external hyperlink {address}"
-
-
 def validate_pdf(path: Path, required: list[str], max_pages: int) -> None:
     reader = PdfReader(path)
     assert 1 <= len(reader.pages) <= max_pages, f"{path.name}: unexpected page count"
@@ -83,13 +70,10 @@ def validate_pdf(path: Path, required: list[str], max_pages: int) -> None:
 
 def main() -> None:
     for artifact in ARTIFACTS:
-        docx = CV / f"{artifact['stem']}.docx"
         pdf = CV / f"{artifact['stem']}.pdf"
-        assert docx.is_file() and docx.stat().st_size > 10_000, f"Missing DOCX: {docx}"
         assert pdf.is_file() and pdf.stat().st_size > 10_000, f"Missing PDF: {pdf}"
-        validate_docx(docx)
         validate_pdf(pdf, artifact["required"], artifact["max_pages"])
-        print(f"validated {docx.name} and {pdf.name}")
+        print(f"validated {pdf.name}")
 
 
 if __name__ == "__main__":

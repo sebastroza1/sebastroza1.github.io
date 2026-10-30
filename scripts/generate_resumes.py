@@ -12,7 +12,7 @@ from docx.shared import Inches, Pt, RGBColor
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT = ROOT / "public" / "cv"
+OUTPUT = ROOT / "tmp" / "resume-build"
 BLACK = RGBColor(18, 24, 32)
 MUTED = RGBColor(58, 67, 78)
 ACCENT = RGBColor(15, 72, 94)

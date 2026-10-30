@@ -40,6 +40,25 @@ export interface Project {
 
 export const projects: Project[] = [
   {
+    slug: 'engineering-portfolio-delivery',
+    name: 'Engineering Portfolio Delivery',
+    categories: ['featured', 'software', 'systems'],
+    kind: 'Independent project', status: 'CI validated', featured: true,
+    repo: 'https://github.com/sebastroza1/sebastroza1.github.io',
+    documentation: 'https://github.com/sebastroza1/sebastroza1.github.io/blob/main/VALIDATION.md',
+    languages: ['TypeScript', 'CSS', 'Python', 'PowerShell'], technologies: ['React 19', 'Vite', 'Vitest', 'Playwright', 'GitHub Actions', 'GitHub Pages'],
+    overview: { en: 'The public portfolio itself: a bilingual, responsive and evidence-led React experience delivered through a branch, pull-request, CI and GitHub Pages workflow.', es: 'El propio portafolio público: experiencia React bilingüe, responsive y basada en evidencia, entregada mediante ramas, pull requests, CI y GitHub Pages.' },
+    problem: { en: 'Present broad engineering experience without sacrificing mobile usability, accessibility, traceability or honest evidence boundaries.', es: 'Presentar experiencia amplia sin sacrificar usabilidad móvil, accesibilidad, trazabilidad ni límites honestos de evidencia.' },
+    solution: { en: 'Build a typed project catalogue, bilingual interface, responsive design system, accessible motion, PDF resume delivery and automated browser validation.', es: 'Construir catálogo tipado, interfaz bilingüe, sistema responsive, movimiento accesible, entrega de CV en PDF y validación automática en navegador.' },
+    contribution: { en: 'Designed the information architecture, evidence model, responsive UI, automated checks, Git workflow and production publication with AI-assisted implementation under human review.', es: 'Diseñé la arquitectura de información, modelo de evidencia, UI responsive, verificaciones automáticas, flujo Git y publicación productiva con implementación asistida por IA y revisión humana.' },
+    architecture: { en: 'React/TypeScript SPA → typed project records → Vitest/Playwright validation → GitHub Actions → immutable Pages artifact and deployment.', es: 'SPA React/TypeScript → registros tipados → validación Vitest/Playwright → GitHub Actions → artefacto y despliegue inmutable en Pages.' },
+    testing: { en: 'Lint, TypeScript, component tests, desktop/mobile E2E, download checks, visual captures, dependency audit and Lighthouse are recorded in the repository.', es: 'Lint, TypeScript, pruebas de componentes, E2E desktop/móvil, descargas, capturas visuales, auditoría de dependencias y Lighthouse quedan registrados en el repositorio.' },
+    results: { en: 'Publicly deployed with responsive desktop/mobile views, traceable releases and PDF-only resume downloads verified after deployment.', es: 'Desplegado públicamente con vistas responsive, releases trazables y descargas de CV solo PDF verificadas después del despliegue.' },
+    limitations: { en: 'Lighthouse remains synthetic lab evidence; the static site has no analytics, backend or real-user performance monitoring.', es: 'Lighthouse sigue siendo evidencia sintética; el sitio estático no posee analítica, backend ni monitoreo de rendimiento de usuarios reales.' },
+    learning: { en: 'A credible portfolio is an engineering product: content provenance, Git history, accessibility, mobile behavior and deployment evidence matter as much as visual polish.', es: 'Un portafolio creíble es un producto de ingeniería: procedencia, historial Git, accesibilidad, comportamiento móvil y evidencia de despliegue importan tanto como el acabado visual.' },
+    evidence: ['Public source and Git history', 'Pull-request validation', 'GitHub Actions deployment', 'Desktop/mobile browser tests'],
+  },
+  {
     slug: 'mlops-gpu-benchmark-lab',
     name: 'Reproducible PyTorch Benchmarking',
     categories: ['featured', 'ml', 'data'],

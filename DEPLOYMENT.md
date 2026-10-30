@@ -25,16 +25,14 @@ git push -u origin main
 
 Never force-push for deployment. The workflow is the deployment mechanism; `dist/` is not committed.
 
-## Resume artifacts
+## Resume PDFs
 
-The site publishes four verified files under `public/cv/`:
+The site publishes only two verified PDF files under `public/cv/`:
 
 - `Sebastian_Astroza_Software_Engineer_General_2026.pdf`
-- `Sebastian_Astroza_Software_Engineer_General_2026.docx`
 - `Sebastian_Astroza_CV_General_2026_ES.pdf`
-- `Sebastian_Astroza_CV_General_2026_ES.docx`
 
-Before deployment, run `python scripts/validate_resume_artifacts.py`, confirm each URL returns a non-empty file and visually inspect every PDF page. Do not host institutional certificates without explicit authorization.
+Editable sources are generated only in the ignored `tmp/resume-build/` directory and must not be committed or linked. Before deployment, run `python scripts/validate_resume_artifacts.py`, confirm each PDF URL returns a non-empty file and visually inspect every page. Do not host institutional certificates without explicit authorization.
 
 ## Rollback
 

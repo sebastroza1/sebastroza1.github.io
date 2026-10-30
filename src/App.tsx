@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react'
+import { useEffect, useLayoutEffect, useMemo, useState, type ReactNode } from 'react'
 import {
   AlertTriangle, ArrowLeft, ArrowRight, Bot, Braces, CheckCircle2, ChevronRight, CircleDot,
   Database, Download, ExternalLink, Github, Globe2, Languages,
@@ -26,7 +26,7 @@ const copy = {
     allProjects: 'Explore all projects', filters: 'Filter the evidence', search: 'Search projects', category: 'Area', language: 'Language', tech: 'Technology', kind: 'Type', status: 'Status', all: 'All', clear: 'Clear filters', noResults: 'No projects match these filters.',
     results: 'Verified result', limitations: 'Limitations', evidence: 'Evidence', details: 'View case study', repository: 'GitHub repository', docs: 'Evidence document',
     overview: 'Overview', problem: 'Problem', contribution: 'My contribution', architecture: 'Architecture', implementation: 'Implementation', challenges: 'Engineering challenges', testing: 'Testing', learned: 'What I learned', back: 'Back to projects',
-    resumeTitle: 'General software engineering resume', resumeBody: 'A recruiter-ready, ATS-oriented resume with selectable text, visible links and an editable DOCX. Choose the English or Spanish edition.',
+    resumeTitle: 'General software engineering resume', resumeBody: 'Recruiter-ready, ATS-oriented PDF resumes with selectable text, visible links and professional metadata. Choose the English or Spanish edition.',
     contactTitle: 'Let’s build useful, reliable systems.', contactBody: 'Open to software engineering, full-stack, infrastructure, data, automation, applied AI and research-engineering opportunities in Chile or internationally.',
     academicPending: 'Academic requirements completed in 2026 · degree conferral pending',
   },
@@ -47,7 +47,7 @@ const copy = {
     allProjects: 'Explorar todos los proyectos', filters: 'Filtrar la evidencia', search: 'Buscar proyectos', category: 'Área', language: 'Lenguaje', tech: 'Tecnología', kind: 'Tipo', status: 'Estado', all: 'Todos', clear: 'Limpiar filtros', noResults: 'Ningún proyecto coincide con estos filtros.',
     results: 'Resultado verificado', limitations: 'Limitaciones', evidence: 'Evidencia', details: 'Ver caso de estudio', repository: 'Repositorio GitHub', docs: 'Documento de evidencia',
     overview: 'Resumen', problem: 'Problema', contribution: 'Mi contribución', architecture: 'Arquitectura', implementation: 'Implementación', challenges: 'Desafíos de ingeniería', testing: 'Pruebas', learned: 'Qué aprendí', back: 'Volver a proyectos',
-    resumeTitle: 'Currículum general de ingeniería de software', resumeBody: 'Un CV listo para reclutamiento y orientado a ATS, con texto seleccionable, enlaces visibles y DOCX editable. Elige la edición en español o inglés.',
+    resumeTitle: 'Currículum general de ingeniería de software', resumeBody: 'CV en PDF listos para reclutamiento y orientados a ATS, con texto seleccionable, enlaces visibles y metadatos profesionales. Elige la edición en español o inglés.',
     contactTitle: 'Construyamos sistemas útiles y confiables.', contactBody: 'Disponible para oportunidades en ingeniería de software, full-stack, infraestructura, datos, automatización, IA aplicada e ingeniería de investigación en Chile o el extranjero.',
     academicPending: 'Requisitos académicos completados en 2026 · otorgamiento de grado pendiente',
   },
@@ -105,12 +105,10 @@ const resumes = {
   en: {
     label: 'English edition', description: 'General Software Engineer · 1 page',
     pdf: 'Sebastian_Astroza_Software_Engineer_General_2026.pdf',
-    docx: 'Sebastian_Astroza_Software_Engineer_General_2026.docx',
   },
   es: {
     label: 'Edición en español', description: 'Ingeniería de Software General · 2 páginas',
     pdf: 'Sebastian_Astroza_CV_General_2026_ES.pdf',
-    docx: 'Sebastian_Astroza_CV_General_2026_ES.docx',
   },
 } as const
 
@@ -136,7 +134,36 @@ function usePreferences() {
   return { language, setLanguage, theme, setTheme }
 }
 
-function Header({ language, setLanguage, theme, setTheme }: { language: Language; setLanguage: (value: Language) => void; theme: Theme; setTheme: (value: Theme) => void }) {
+function useScrollReveal(route: string) {
+  useLayoutEffect(() => {
+    const elements = [...document.querySelectorAll<HTMLElement>('.content-section, .proof-band, .filter-panel, .page-main > .project-grid .project-card, .contact-section, .resume-grid article, .detail-content section, .detail-aside')]
+    elements.forEach((element, index) => {
+      element.classList.add('reveal-target')
+      element.style.setProperty('--reveal-order', String(index % 5))
+    })
+
+    if (typeof IntersectionObserver === 'undefined') {
+      elements.forEach((element) => element.classList.add('is-visible'))
+      return
+    }
+
+    document.documentElement.classList.add('motion-ready')
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return
+        entry.target.classList.add('is-visible')
+        observer.unobserve(entry.target)
+      })
+    }, { threshold: 0.08, rootMargin: '0px 0px -8% 0px' })
+    elements.forEach((element) => observer.observe(element))
+    return () => {
+      observer.disconnect()
+      document.documentElement.classList.remove('motion-ready')
+    }
+  }, [route])
+}
+
+function Header({ language, setLanguage, theme, setTheme, route }: { language: Language; setLanguage: (value: Language) => void; theme: Theme; setTheme: (value: Theme) => void; route: string }) {
   const [open, setOpen] = useState(false)
   const t = copy[language]
   const items = [
@@ -150,10 +177,12 @@ function Header({ language, setLanguage, theme, setTheme }: { language: Language
       window.setTimeout(() => document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' }), 30)
     } else window.location.hash = href.slice(1)
   }
+  useEffect(() => setOpen(false), [route])
+  const isActive = (href: string) => href === '#/' ? route === '/' : href === '#/projects' ? route.startsWith('/projects') : href === '#/resume' ? route === '/resume' : false
   return <header className="site-header">
     <a href="#/" className="brand" aria-label="SA — Sebastián Astroza home"><span>SA</span><b>Sebastián Astroza</b></a>
     <nav className={open ? 'nav-links open' : 'nav-links'} aria-label="Primary navigation">
-      {items.map(([href, label]) => <button key={label} onClick={() => navigate(href)}>{label}</button>)}
+      {items.map(([href, label]) => <button className={isActive(href) ? 'active' : ''} aria-current={isActive(href) ? 'page' : undefined} key={label} onClick={() => navigate(href)}>{label}</button>)}
     </nav>
     <div className="header-actions">
       <button className="icon-button language-button" onClick={() => setLanguage(language === 'en' ? 'es' : 'en')} aria-label={language === 'en' ? 'Cambiar a español' : 'Switch to English'}><Languages size={17}/><span>{language.toUpperCase()}</span></button>
@@ -164,15 +193,18 @@ function Header({ language, setLanguage, theme, setTheme }: { language: Language
 }
 
 function HeroPortrait({ language }: { language: Language }) {
+  const [loaded, setLoaded] = useState(false)
   return <figure className="hero-portrait" aria-labelledby="portrait-caption">
-    <div className="portrait-frame">
+    <div className={`portrait-frame ${loaded ? 'image-loaded' : ''}`}>
       <div className="portrait-status"><span>PROFILE / 2026</span><span className="trace-state">AVAILABLE</span></div>
+      <span className="portrait-loader" aria-hidden="true"/>
       <img
         src="/assets/sebastian-astroza-portrait.webp"
         alt={language === 'en' ? 'Portrait of Sebastián Astroza wearing a blue shirt' : 'Retrato de Sebastián Astroza con camisa azul'}
         width="900"
         height="1059"
         fetchPriority="high"
+        onLoad={() => setLoaded(true)}
       />
       <div className="portrait-proof" aria-label={language === 'en' ? 'Professional focus' : 'Enfoque profesional'}>
         <span>FULL-STACK</span><span>LINUX</span><span>DATA</span><span>APPLIED AI</span>
@@ -269,7 +301,7 @@ function Section({ id, eyebrow, title, children, className = '' }: { id?: string
 
 function HomePage({ language }: { language: Language }) {
   const t = copy[language]
-  const featured = projects.filter((project) => project.featured)
+  const featured = projects.filter((project) => project.featured).slice(0, 6)
   return <main id="main-content">
     <section className="hero section-frame">
       <div className="hero-copy"><p className="eyebrow">{t.heroKicker}</p><h1>{t.heroTitleA}<br/><em>{t.heroTitleB}</em></h1><p className="hero-lead">{t.heroBody}</p>
@@ -307,8 +339,8 @@ function ResumePage({ language }: { language: Language }) {
   const editions: Language[] = [language, language === 'en' ? 'es' : 'en']
   return <main id="main-content" className="page-main"><header className="page-hero"><p className="eyebrow">Resume / CV</p><h1>{t.resumeTitle}</h1><p>{t.resumeBody}</p></header><div className="resume-grid">{editions.map((edition, index) => {
     const resume = resumes[edition]
-    return <article className={index === 0 ? 'resume-primary' : ''} key={edition}><Download/><p className="mono-label">{index === 0 ? (language === 'en' ? 'Primary download' : 'Descarga principal') : (language === 'en' ? 'Alternate language' : 'Idioma alternativo')}</p><h2>{resume.label}</h2><p>{resume.description}</p><div className="resume-actions"><a className="button primary" href={`/cv/${resume.pdf}`} download><Download size={16}/>{language === 'en' ? 'Download PDF' : 'Descargar PDF'}</a><a className="button secondary" href={`/cv/${resume.docx}`} download>{language === 'en' ? 'Editable DOCX' : 'DOCX editable'}</a></div><code>{resume.pdf}</code></article>
-  })}</div><div className="resume-note"><ShieldCheck/><div><h2>{language === 'en' ? 'Validated publication files' : 'Archivos de publicación validados'}</h2><p>{language === 'en' ? 'Both editions use selectable text, a linear ATS-friendly reading order, visible clickable links and professional metadata. The DOCX files remain fully editable; the resume intentionally contains no photograph.' : 'Ambas ediciones usan texto seleccionable, lectura lineal orientada a ATS, enlaces visibles y clicables, y metadatos profesionales. Los DOCX siguen totalmente editables; el CV no incluye fotografía de forma intencional.'}</p></div></div></main>
+    return <article className={index === 0 ? 'resume-primary' : ''} key={edition}><Download/><p className="mono-label">{index === 0 ? (language === 'en' ? 'Primary download' : 'Descarga principal') : (language === 'en' ? 'Alternate language' : 'Idioma alternativo')}</p><h2>{resume.label}</h2><p>{resume.description}</p><div className="resume-actions"><a className="button primary" href={`/cv/${resume.pdf}`} download><Download size={16}/>{language === 'en' ? 'Download PDF' : 'Descargar PDF'}</a></div><code>{resume.pdf}</code></article>
+  })}</div><div className="resume-note"><ShieldCheck/><div><h2>{language === 'en' ? 'Validated publication files' : 'Archivos de publicación validados'}</h2><p>{language === 'en' ? 'Both PDF editions use selectable text, a linear ATS-friendly reading order, visible clickable links and professional metadata. The resumes intentionally contain no photograph and no editable public source file.' : 'Ambas ediciones PDF usan texto seleccionable, lectura lineal orientada a ATS, enlaces visibles y clicables, y metadatos profesionales. Los CV no incluyen fotografía ni un archivo fuente editable público.'}</p></div></div></main>
 }
 
 function Contact({ language }: { language: Language }) {
@@ -323,7 +355,8 @@ function Footer({ language }: { language: Language }) {
 export default function App() {
   const route = useRoute()
   const { language, setLanguage, theme, setTheme } = usePreferences()
+  useScrollReveal(route)
   useEffect(() => { if (!route.startsWith('/projects/')) document.title = 'Sebastián Astroza — Software Engineering Portfolio'; window.scrollTo({ top: 0 }) }, [route])
   const detail = route.startsWith('/projects/') ? projects.find((project) => project.slug === route.split('/')[2]) : undefined
-  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme}/>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}<Footer language={language}/></>
+  return <><Header language={language} setLanguage={setLanguage} theme={theme} setTheme={setTheme} route={route}/><div className="route-shell" key={route}>{detail ? <ProjectDetail project={detail} language={language}/> : route === '/projects' ? <ProjectsPage language={language}/> : route === '/resume' ? <ResumePage language={language}/> : <HomePage language={language}/>}</div><Footer language={language}/></>
 }
